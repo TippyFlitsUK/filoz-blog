@@ -1,0 +1,36 @@
+# Hugo generated files
+/public/
+/resources/_gen/
+/assets/jsconfig.json
+.hugo_build.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+
+# Node modules (if using npm for tools)
+node_modules/
+
+# Medium export files
+medium-export/
+medium-export.zip
+md_*/
+
+# Temporary files
+*.log
+*.tmp
+/tmp/
+
+# Screenshots
+Screenshot*.png

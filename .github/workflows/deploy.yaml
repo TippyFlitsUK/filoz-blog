@@ -1,0 +1,153 @@
+name: Build Hugo and Pin to Filecoin
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  HUGO_VERSION: 0.139.3
+
+jobs:
+  build-and-pin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        run: |
+          wget -O hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz
+          tar -xzf hugo.tar.gz
+          sudo mv hugo /usr/local/bin/
+          hugo version
+
+      - name: Build Hugo site
+        run: |
+          hugo --gc --minify
+          echo "Site built successfully"
+          ls -lh public/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Filecoin Pin CLI
+        run: |
+          npm install -g filecoin-pin
+          filecoin-pin --version
+
+      - name: Configure Filecoin Pin payments
+        env:
+          PRIVATE_KEY: ${{ secrets.FILECOIN_PRIVATE_KEY }}
+        run: |
+          echo "Configuring Filecoin Pin payments..."
+          filecoin-pin payments setup --auto
+          echo "Payment configuration complete"
+
+      - name: Pin site to Filecoin
+        env:
+          PRIVATE_KEY: ${{ secrets.FILECOIN_PRIVATE_KEY }}
+          PROVIDER_ID: 3
+        run: |
+          echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 3)..."
+          OUTPUT=$(filecoin-pin add ./public/ --provider-id 3 2>&1)
+          echo "$OUTPUT"
+
+          # Extract CID from output
+          CID=$(echo "$OUTPUT" | grep -oP 'bafyb\w+' | head -1)
+
+          if [ -z "$CID" ]; then
+            echo "Error: Could not extract CID from output"
+            exit 1
+          fi
+
+          echo "CID=$CID" >> $GITHUB_ENV
+          echo "Site pinned successfully!"
+          echo "CID: $CID"
+
+      - name: Generate deployment info
+        run: |
+          cat > deployment-info.txt <<EOF
+          Deployment Information
+          ======================
+          Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          Commit: ${{ github.sha }}
+          Branch: ${{ github.ref_name }}
+          CID: ${{ env.CID }}
+
+          Access URLs:
+          - https://ipfs.io/ipfs/${{ env.CID }}
+          - https://dweb.link/ipfs/${{ env.CID }}
+          - https://cloudflare-ipfs.com/ipfs/${{ env.CID }}
+          - https://${{ env.CID }}.ipfs.dweb.link
+
+          Note: It may take a few minutes for the content to propagate across IPFS gateways.
+          EOF
+
+          cat deployment-info.txt
+
+      - name: Save CID artifact
+        run: |
+          echo "${{ env.CID }}" > cid.txt
+          echo "ipfs://${{ env.CID }}" > ipfs-uri.txt
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: filecoin-deployment
+          path: |
+            cid.txt
+            ipfs-uri.txt
+            deployment-info.txt
+
+      - name: Create deployment summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Your Hugo blog has been successfully built and pinned to Filecoin!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Access Your Site" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**CID:** \`${{ env.CID }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**IPFS Gateway URLs:**" >> $GITHUB_STEP_SUMMARY
+          echo "- https://ipfs.io/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
+          echo "- https://dweb.link/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
+          echo "- https://cloudflare-ipfs.com/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
+          echo "- https://${{ env.CID }}.ipfs.dweb.link" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Note: It may take a few minutes for content to propagate across IPFS gateways." >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on commit (if applicable)
+        if: github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cid = process.env.CID;
+            const message = `🚀 **Blog deployed to Filecoin!**
+
+            **CID:** \`${cid}\`
+
+            **Access your site:**
+            - https://ipfs.io/ipfs/${cid}
+            - https://${cid}.ipfs.dweb.link
+
+            _Note: Allow a few minutes for IPFS gateway propagation._`;
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: message
+            });

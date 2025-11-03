@@ -1,0 +1,50 @@
+baseURL: ""
+relativeURLs: true
+languageCode: en-us
+title: Filoz Blog
+theme: PaperMod
+
+pagination:
+  pagerSize: 10
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+minify:
+  disableXML: true
+  minifyOutput: false
+
+params:
+  env: production
+  title: Filoz Blog
+  description: "Filecoin storage provider and Web3 technology insights"
+  keywords: [Filecoin, Storage Provider, Web3, Blockchain, Decentralization]
+  author: Filoz
+
+  defaultTheme: light
+  disableThemeToggle: true
+  ShowReadingTime: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: true
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: true
+  disableScrollToTop: false
+  comments: false
+  hidemeta: false
+  hideSummary: false
+  showtoc: false
+  tocopen: false
+
+  assets:
+    disableHLJS: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
