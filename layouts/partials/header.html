@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
+    <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    {{ if .Params.cover.image }}
+    <meta property="og:image" content="{{ .Params.cover.image | absURL }}">
+    {{ end }}
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ .Permalink }}">
+    <meta property="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
+    <meta property="twitter:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    {{ if .Params.cover.image }}
+    <meta property="twitter:image" content="{{ .Params.cover.image | absURL }}">
+    {{ end }}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/logos/symbol.svg">
+
+    <!-- Fonts - IBM Plex Sans loaded via CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Custom CSS -->
+    {{ $customCSS := resources.Get "css/extended/custom.css" }}
+    {{ if $customCSS }}
+        <link rel="stylesheet" href="{{ $customCSS.RelPermalink }}">
+    {{ end }}
+
+    <!-- PaperMod Styles -->
+    {{- partial "head.html" . }}
+</head>
+<body class="filoz-blog">
+    <!-- FilOz Navigation -->
+    <div class="navbar_component">
+        <div class="navbar_container">
+            <!-- Logo -->
+            <a href="https://www.filoz.org/" class="navbar_logo-link">
+                <img src="/images/logos/logo-primary.svg" alt="FilOz Logo" class="navbar_logo">
+                <img src="/images/logos/logo-secondary.svg" alt="FilOz Logo" class="navbar_logo">
+            </a>
+
+            <!-- Navigation Menu -->
+            <nav class="navbar_menu">
+                <a href="https://www.filoz.org/" class="button-secondary">
+                    <p class="nav-link-text">Home</p>
+                </a>
+                <a href="https://www.filoz.org/events" class="button-secondary">
+                    <p class="nav-link-text">Events</p>
+                </a>
+                <a href="https://www.filoz.org/resources" class="button-secondary">
+                    <p class="nav-link-text">Resources</p>
+                </a>
+                <a href="{{ .Site.BaseURL }}" class="button-secondary w--current">
+                    <p class="nav-link-text">Blog</p>
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <div class="navbar_menu-button" onclick="toggleMobileMenu()">
+                <div class="menu-icon1">
+                    <div class="menu-icon_line-top"></div>
+                    <div class="menu-icon_line-middle"></div>
+                    <div class="menu-icon_line-bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>

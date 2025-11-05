@@ -34,3 +34,6 @@ md_*/
 
 # Screenshots
 Screenshot*.png
+
+# Webflow template (local reference only)
+filoz-template/

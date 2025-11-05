@@ -1,0 +1,68 @@
+{{ define "main" }}
+<main class="main">
+    <section class="section_event">
+        <div class="padding-global padding-section-large">
+            <div class="container-large">
+                <!-- Blog Posts List (Event Card Style) -->
+                <div class="blog-posts-list">
+                    {{ range .Pages }}
+                    <a href="{{ .Permalink }}" class="blog-post-card">
+                        <!-- Post Image -->
+                        <div class="blog-post-image">
+                            {{ if .Params.cover.image }}
+                                <img src="{{ .Params.cover.image }}" alt="{{ .Title }}" loading="lazy">
+                            {{ else }}
+                                <img src="/images/filoz-avatar.png" alt="FilOz" loading="lazy">
+                            {{ end }}
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="blog-post-content">
+                            <div class="margin-bottom margin-small">
+                                <h2 class="blog-post-title">{{ .Title }}</h2>
+                            </div>
+
+                            <p class="blog-post-summary">
+                                {{ if .Description }}
+                                    {{ .Description }}
+                                {{ else }}
+                                    {{ .Summary | truncate 200 }}
+                                {{ end }}
+                            </p>
+
+                            <!-- Author/Meta -->
+                            <div class="margin-top margin-xmedium">
+                                <div class="blog-post-meta">
+                                    <div class="text-size-small black">By:</div>
+                                    <img src="/images/filoz-avatar.png" alt="FilOz" class="blog-post-avatar">
+                                    <div class="text-size-small gray">
+                                        {{ if .Params.author }}{{ .Params.author }}{{ else }}FilOz{{ end }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Date and CTA -->
+                            <div class="margin-top margin-small">
+                                <div class="blog-post-footer">
+                                    <div class="blog-post-date">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 3V6L8 7M11 6C11 8.76142 8.76142 11 6 11C3.23858 11 1 8.76142 1 6C1 3.23858 3.23858 1 6 1C8.76142 1 11 3.23858 11 6Z"
+                                                  stroke="#0090FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="text-size-small">{{ .Date.Format "Jan 2, 2006" }}</span>
+                                    </div>
+                                    <div class="blog-post-cta">
+                                        <span>Read More</span>
+                                        <img src="/images/icons/arrow-up-right.svg" alt="Arrow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{{ end }}

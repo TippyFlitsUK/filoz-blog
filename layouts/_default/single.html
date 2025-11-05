@@ -1,0 +1,129 @@
+{{ define "main" }}
+<div class="page-wrapper">
+    <!-- Navbar (same as on Events page) -->
+    <div data-collapse="medium" data-animation="default" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="navbar_component w-nav">
+        <div class="navbar_container">
+            <a href="/" class="navbar_logo-link w-nav-brand" aria-label="home">
+                <img src="/images/logos/logo-primary.svg" loading="lazy" alt="" class="navbar_logo">
+                <img src="/images/logos/logo-secondary.svg" loading="lazy" alt="" class="navbar_logo is-animated">
+            </a>
+            <nav role="navigation" class="navbar_menu w-nav-menu">
+                <a href="https://www.filoz.org/" class="navbar_link w-nav-link">Home</a>
+                <a href="https://www.filoz.org/events" class="navbar_link w-nav-link">Events</a>
+                <a href="https://www.filoz.org/resources" class="navbar_link w-nav-link">Resources</a>
+                <a href="/" aria-current="page" class="navbar_link w-nav-link w--current">Blog</a>
+            </nav>
+            <div class="navbar_menu-button w-nav-button" style="-webkit-user-select: text;" aria-label="menu" role="button" tabindex="0" aria-controls="w-nav-overlay-0" aria-haspopup="menu" aria-expanded="false">
+                <div class="menu-icon">
+                    <div class="menu-icon_line-top"></div>
+                    <div class="menu-icon_line-middle">
+                        <div class="menu-icon_line-middle-inner"></div>
+                    </div>
+                    <div class="menu-icon_line-bottom"></div>
+                </div>
+            </div>
+        </div>
+        <div class="w-nav-overlay" data-wf-ignore="" id="w-nav-overlay-0"></div>
+    </div>
+
+    <!-- Blog Post Content -->
+    <section class="section_event">
+        <div class="padding-global">
+            <div class="container-large">
+                <div class="padding-section-large">
+                    <!-- Blog Post Header -->
+                    <div class="margin-bottom margin-xlarge">
+                        <div class="max-width-large align-center">
+                            <div class="margin-bottom margin-small">
+                                <h1 class="heading-style-h2 light-blue">{{ .Title }}</h1>
+                            </div>
+                            {{ if .Description }}
+                            <p class="text-size-medium gray-soft">{{ .Description }}</p>
+                            {{ end }}
+                            <div class="margin-top margin-medium">
+                                <div class="event_multi-image-item" style="justify-content: center;">
+                                    <div class="text-size-small black">By:</div>
+                                    <img loading="lazy" src="/images/filoz-avatar.png" alt="FilOz" class="event_avatar">
+                                    <div class="w-layout-hflex company-name-wrap">
+                                        <div class="text-size-small gray">{{ if .Params.author }}{{ .Params.author }}{{ else }}FilOz{{ end }}</div>
+                                    </div>
+                                    <div class="text-size-small gray" style="margin-left: 1rem;">{{ .Date.Format "January 2, 2006" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Post Body -->
+                    <div class="max-width-large align-center">
+                        <div class="text-rich-text w-richtext">
+                            {{ .Content }}
+                        </div>
+                    </div>
+
+                    <!-- Back to Blog Link -->
+                    <div class="margin-top margin-xxlarge">
+                        <div class="max-width-large align-center">
+                            <a href="/" class="button-group-3">
+                                <div class="arrow-button pad is-reverse">
+                                    <div class="title-wrapper">
+                                        <div class="arrow-wrapper">
+                                            <img src="/images/icons/arrow-up-right.svg" loading="lazy" alt="" class="button-arrow" style="transform: rotate(180deg);">
+                                        </div>
+                                        <p class="button-title">Back to Blog</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as on Events page) -->
+    <footer class="footer">
+        <div class="padding-global">
+            <div class="container-large">
+                <div class="padding-vertical padding-xlarge">
+                    <div class="padding-bottom padding-xxlarge">
+                        <div class="footer_top-wrapper">
+                            <a href="/" class="footer_logo-link w-inline-block">
+                                <img src="/images/logos/logo-primary.svg" loading="lazy" alt="" class="footer_logo">
+                            </a>
+                            <div class="w-layout-grid footer_link-list">
+                                <a id="w-node-_52cbbfd6-37bf-dfa1-85bf-4dbe5d70c9ce-5d70c9c1" href="https://www.filoz.org/" class="footer_link">Home</a>
+                                <a id="w-node-_52cbbfd6-37bf-dfa1-85bf-4dbe5d70c9d0-5d70c9c1" href="https://www.filoz.org/events" class="footer_link">Events</a>
+                                <a id="w-node-_52cbbfd6-37bf-dfa1-85bf-4dbe5d70c9d2-5d70c9c1" href="https://www.filoz.org/resources" class="footer_link">Resources</a>
+                                <a id="w-node-_52cbbfd6-37bf-dfa1-85bf-4dbe5d70c9d4-5d70c9c1" href="/" class="footer_link">Blog</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="line-divider"></div>
+                    <div class="padding-top padding-medium">
+                        <div class="footer_bottom-wrapper">
+                            <div class="footer_credit-text gray">Securing, upgrading, and expanding the utility of the Filecoin network</div>
+                            <div class="w-layout-grid footer_social-list">
+                                <a href="https://x.com/fil_oz" target="_blank" class="footer_social-link w-inline-block">
+                                    <div class="social-icon w-embed">
+                                        <img src="/images/icons/twitter.svg" loading="lazy" alt="Twitter">
+                                    </div>
+                                </a>
+                                <a href="https://github.com/filecoin-project/" target="_blank" class="footer_social-link w-inline-block">
+                                    <div class="social-icon w-embed">
+                                        <img src="/images/icons/github.svg" loading="lazy" alt="GitHub">
+                                    </div>
+                                </a>
+                                <a href="https://filecoinproject.slack.com/" target="_blank" class="footer_social-link w-inline-block">
+                                    <div class="social-icon w-embed">
+                                        <img src="/images/icons/slack.svg" loading="lazy" alt="Slack">
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{{ end }}

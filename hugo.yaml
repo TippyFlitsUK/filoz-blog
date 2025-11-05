@@ -1,7 +1,6 @@
 baseURL: ""
 relativeURLs: true
 title: Filoz Blog
-theme: PaperMod
 
 enableInlineShortcodes: true
 enableRobotsTXT: true
@@ -25,17 +24,6 @@ languages:
       category: categories
       tag: tags
       series: series
-    menu:
-      main:
-        - name: Archive
-          url: archives
-          weight: 5
-        - name: Search
-          url: search/
-          weight: 10
-        - name: Tags
-          url: tags/
-          weight: 10
 
 outputs:
   home:
@@ -46,27 +34,44 @@ outputs:
 params:
   env: production
   title: Filoz Blog
-  description: "Filecoin storage provider and Web3 technology insights"
-  author: Filoz
+  description: "Empowering the Future of Decentralized Storage"
+  author: FilOz
 
+  # FilOz branding
+  label:
+    text: "FilOz Blog"
+    icon: /images/logos/symbol.svg
+
+  # Social icons (used in footer via custom template)
+  socialIcons:
+    - name: twitter
+      url: "https://x.com/_FilOz"
+    - name: github
+      url: "https://github.com/filecoin-project/lotus"
+    - name: slack
+      url: "https://filecoinproject.slack.com/archives/CP50PPW2X"
+
+  # Disable PaperMod features we're replacing with custom layouts
   defaultTheme: auto
-  ShowShareButtons: true
+  ShowShareButtons: false
   ShowReadingTime: true
   displayFullLangName: true
-  ShowPostNavLinks: true
-  ShowBreadCrumbs: true
+  ShowPostNavLinks: false
+  ShowBreadCrumbs: false
   ShowCodeCopyButtons: true
-  ShowRssButtonInSectionTermList: true
+  ShowRssButtonInSectionTermList: false
   ShowAllPagesInArchive: true
-  ShowPageNums: true
-  ShowToc: true
+  ShowPageNums: false
+  ShowToc: false
 
-  homeInfoParams:
-    Title: "Welcome to Filoz Blog"
-    Content: "Filecoin storage provider and Web3 technology insights"
-
+  # Custom CSS
   assets:
-    disableHLJS: true
+    disableHLJS: false
+
+  # Disable home info since we're using custom layout
+  homeInfoParams:
+    Title: ""
+    Content: ""
 
 markup:
   goldmark:

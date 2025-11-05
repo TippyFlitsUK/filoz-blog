@@ -1,0 +1,66 @@
+    <!-- FilOz Footer -->
+    <div class="footer">
+        <div class="padding-global">
+            <div class="container-large">
+                <div class="padding-vertical padding-large">
+                    <!-- Footer Top -->
+                    <div class="footer_top-wrapper">
+                        <a href="https://www.filoz.org/" class="navbar_logo-link">
+                            <img src="/images/logos/logo-primary.svg" alt="FilOz Logo" class="navbar_logo">
+                            <img src="/images/logos/logo-secondary.svg" alt="FilOz Logo" class="navbar_logo">
+                        </a>
+                        <div class="text-block">Empowering the Future of Decentralized Storage</div>
+                        <div class="footer_link-list">
+                            <a href="https://www.filoz.org/" class="footer_link">Home</a>
+                            <a href="https://www.filoz.org/events" class="footer_link">Events</a>
+                            <a href="https://www.filoz.org/resources" class="footer_link">Resources</a>
+                            <a href="{{ .Site.BaseURL }}" class="footer_link">Blog</a>
+                        </div>
+                    </div>
+
+                    <!-- Footer Bottom -->
+                    <div class="footer_bottom-wrapper">
+                        <div class="footer_credit-text">Copyright © {{ now.Year }} FilOz</div>
+                        <div class="footer_legal-list">
+                            <a href="https://x.com/_FilOz" target="_blank" rel="noopener noreferrer">
+                                <img src="/images/icons/twitter.svg" alt="Twitter">
+                            </a>
+                            <a href="https://github.com/filecoin-project/lotus" target="_blank" rel="noopener noreferrer">
+                                <img src="/images/icons/github.svg" alt="GitHub">
+                            </a>
+                            <a href="https://filecoinproject.slack.com/archives/CP50PPW2X" target="_blank" rel="noopener noreferrer">
+                                <img src="/images/icons/slack.svg" alt="Slack">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+    function toggleMobileMenu() {
+        const menu = document.querySelector('.navbar_menu');
+        const button = document.querySelector('.navbar_menu-button');
+        if (menu.style.display === 'flex') {
+            menu.style.display = 'none';
+            button.classList.remove('active');
+        } else {
+            menu.style.display = 'flex';
+            menu.style.flexDirection = 'column';
+            menu.style.position = 'absolute';
+            menu.style.top = '70px';
+            menu.style.left = '0';
+            menu.style.right = '0';
+            menu.style.backgroundColor = 'rgba(203, 232, 255, 0.98)';
+            menu.style.padding = '1rem';
+            menu.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+            button.classList.add('active');
+        }
+    }
+    </script>
+
+    {{- partial "extend_footer.html" . }}
+</body>
+</html>
