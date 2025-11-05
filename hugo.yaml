@@ -1,50 +1,77 @@
 baseURL: ""
 relativeURLs: true
-languageCode: en-us
 title: Filoz Blog
 theme: PaperMod
 
-pagination:
-  pagerSize: 10
-
+enableInlineShortcodes: true
 enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
 buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
 
 minify:
   disableXML: true
-  minifyOutput: false
 
-params:
-  env: production
-  title: Filoz Blog
-  description: "Filecoin storage provider and Web3 technology insights"
-  keywords: [Filecoin, Storage Provider, Web3, Blockchain, Decentralization]
-  author: Filoz
+pagination:
+  pagerSize: 10
 
-  defaultTheme: light
-  disableThemeToggle: true
-  ShowReadingTime: true
-  ShowShareButtons: false
-  ShowPostNavLinks: true
-  ShowBreadCrumbs: true
-  ShowCodeCopyButtons: true
-  ShowWordCount: true
-  ShowRssButtonInSectionTermList: true
-  UseHugoToc: true
-  disableSpecial1stPost: true
-  disableScrollToTop: false
-  comments: false
-  hidemeta: false
-  hideSummary: false
-  showtoc: false
-  tocopen: false
-
-  assets:
-    disableHLJS: true
+languages:
+  en:
+    languageName: "English"
+    weight: 1
+    taxonomies:
+      category: categories
+      tag: tags
+      series: series
+    menu:
+      main:
+        - name: Archive
+          url: archives
+          weight: 5
+        - name: Search
+          url: search/
+          weight: 10
+        - name: Tags
+          url: tags/
+          weight: 10
 
 outputs:
   home:
     - HTML
     - RSS
+    - JSON
+
+params:
+  env: production
+  title: Filoz Blog
+  description: "Filecoin storage provider and Web3 technology insights"
+  author: Filoz
+
+  defaultTheme: auto
+  ShowShareButtons: true
+  ShowReadingTime: true
+  displayFullLangName: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowRssButtonInSectionTermList: true
+  ShowAllPagesInArchive: true
+  ShowPageNums: true
+  ShowToc: true
+
+  homeInfoParams:
+    Title: "Welcome to Filoz Blog"
+    Content: "Filecoin storage provider and Web3 technology insights"
+
+  assets:
+    disableHLJS: true
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+    style: monokai

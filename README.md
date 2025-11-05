@@ -8,9 +8,7 @@ A Hugo blog with PaperMod theme, fully deployed to Filecoin PDP (Proof of Data P
 - **Filecoin PDP Storage** - All content pinned to personal storage provider node
 - **IPFS Gateway Access** - Accessible via multiple IPFS gateways
 - **Automated Deployment** - GitHub Actions CI/CD pipeline
-- **Medium Migration** - Tools to migrate posts from Medium with local images
-- **Image Optimization** - Scripts to compress and optimize images before pinning
-- **Zero CDN Dependencies** - All images stored on Filecoin, not Medium or third-party CDNs
+- **Zero CDN Dependencies** - All content stored on decentralized Filecoin storage
 
 ## Architecture
 
@@ -39,7 +37,6 @@ Accessible via IPFS Gateways
 - **Hugo Extended** v0.112.4+ ([installation guide](https://gohugo.io/installation/))
 - **Git** for version control
 - **Node.js 24+** for Filecoin Pin CLI
-- **ImageMagick** (optional, for image optimization)
 
 ### Filecoin Deployment
 
@@ -87,22 +84,6 @@ hugo version
 npm install -g filecoin-pin
 ```
 
-### 4. Install Medium Migration Tool (optional)
-
-```bash
-npm install -g medium-2-md
-```
-
-### 5. Install ImageMagick (optional, for image optimization)
-
-```bash
-# Ubuntu/Debian
-sudo apt-get install imagemagick
-
-# macOS
-brew install imagemagick
-```
-
 ## Local Development
 
 ### Start Development Server
@@ -139,52 +120,6 @@ hugo --gc --minify
 ```
 
 Output will be in `public/` directory.
-
-## Medium Migration
-
-### Step 1: Export from Medium
-
-1. Go to https://medium.com/me/settings/security
-2. Click "Download your information"
-3. Download the `medium-export.zip` file
-4. Extract it to the project root:
-
-```bash
-unzip medium-export.zip
-```
-
-### Step 2: Run Migration Script
-
-```bash
-./migrate-medium.sh
-```
-
-This script will:
-- Convert all Medium posts to Hugo-compatible markdown
-- Download ALL images from Medium posts
-- Save images to `static/images/`
-- Update markdown to reference local images
-- Add YAML frontmatter with title, date, description, canonical URL
-
-### Step 3: Review Migrated Posts
-
-```bash
-ls -la content/posts/
-```
-
-Check posts and make any necessary edits.
-
-### Step 4: Optimize Images (Optional)
-
-```bash
-./optimize-images.sh
-```
-
-This will:
-- Resize images to max 1200px width
-- Compress JPEGs at 85% quality
-- Strip metadata
-- Optionally convert to WebP format
 
 ## Filecoin Deployment
 
@@ -274,8 +209,6 @@ filoz-blog/
 ├── themes/
 │   └── PaperMod/                # Theme (git submodule)
 ├── hugo.yaml                    # Hugo configuration
-├── migrate-medium.sh            # Medium migration script
-├── optimize-images.sh           # Image optimization script
 └── README.md
 ```
 
@@ -365,17 +298,6 @@ git submodule update --init --recursive
 # Clean and rebuild
 rm -rf public/ resources/
 hugo --gc --minify
-```
-
-### Medium Migration Issues
-
-```bash
-# Reinstall medium-2-md
-npm uninstall -g medium-2-md
-npm install -g medium-2-md
-
-# Increase timeout for slow connections
-# Edit migrate-medium.sh and change -t 1000 to -t 2000
 ```
 
 ### Filecoin Pin Fails
