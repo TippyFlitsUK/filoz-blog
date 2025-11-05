@@ -5,6 +5,7 @@ date: '2025-02-26T14:16:33.808Z'
 categories: []
 keywords: []
 slug: the-f3-journey-incentivising-f3-participation-f6aa4aa3a3f5
+featured_image: /images/1__nkAqKrT4oufMS8NnTpZ15w.png
 ---
 
 ![](/images/1__nkAqKrT4oufMS8NnTpZ15w.png)

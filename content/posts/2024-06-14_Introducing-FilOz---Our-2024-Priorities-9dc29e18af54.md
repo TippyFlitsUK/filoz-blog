@@ -5,6 +5,7 @@ date: '2024-06-14T15:16:24.507Z'
 categories: []
 keywords: []
 slug: introducing-filoz-our-2024-priorities-9dc29e18af54
+featured_image: /images/1__YJKYOdNipuS0HhdoziTIXg.png
 ---
 
 ![](/images/1__YJKYOdNipuS0HhdoziTIXg.png)

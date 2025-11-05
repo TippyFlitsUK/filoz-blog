@@ -5,6 +5,7 @@ date: '2024-12-05T22:53:07.629Z'
 categories: []
 keywords: []
 slug: exporting-filecoins-value-to-multichain-part-i-a554ed4434a1
+featured_image: /images/1__sg__HkoNSHEAN0ubpDIovUg.png
 ---
 
 ![](/images/1__sg__HkoNSHEAN0ubpDIovUg.png)

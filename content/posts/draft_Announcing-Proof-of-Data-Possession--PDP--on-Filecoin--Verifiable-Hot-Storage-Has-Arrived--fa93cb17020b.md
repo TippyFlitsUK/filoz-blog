@@ -7,6 +7,7 @@ date: ''
 categories: []
 keywords: []
 slug: ''
+featured_image: /images/1__0tFRL0PLpUfikbR16__fzJA.png
 ---
 
 ![](/images/1__0tFRL0PLpUfikbR16__fzJA.png)

@@ -7,6 +7,7 @@ date: '2024-08-05T19:34:53.838Z'
 categories: []
 keywords: []
 slug: filecoins-nv23-waffle-upgrade-faster-smarter-and-more-dapp-developer-friendly-9e0aeb60d2df
+featured_image: /images/1__yNVjqStUbEaWExmpvC1y__Q.png
 ---
 
 ![](/images/1__yNVjqStUbEaWExmpvC1y__Q.png)

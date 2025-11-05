@@ -5,6 +5,7 @@ date: '2024-06-20T16:07:58.137Z'
 categories: []
 keywords: []
 slug: simplifying-the-onboarding-pipeline-f3b26ccbb758
+featured_image: /images/1__7lwh__xf8chnkS__dKLtmxuw.png
 ---
 
 ![](/images/1__7lwh__xf8chnkS__dKLtmxuw.png)

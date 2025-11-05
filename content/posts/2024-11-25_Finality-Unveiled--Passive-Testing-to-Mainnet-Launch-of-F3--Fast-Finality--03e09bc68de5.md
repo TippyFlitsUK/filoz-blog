@@ -5,6 +5,7 @@ date: '2024-11-25T20:56:17.347Z'
 categories: []
 keywords: []
 slug: finality-unveiled-passive-testing-to-mainnet-launch-of-f3-fast-finality-03e09bc68de5
+featured_image: /images/1__CMBf6ba698Cbrpo7Llpm3w.png
 ---
 
 ![](/images/1__CMBf6ba698Cbrpo7Llpm3w.png)

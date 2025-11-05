@@ -5,6 +5,7 @@ date: '2024-07-29T14:46:58.320Z'
 categories: []
 keywords: []
 slug: porep-pdp-proof-of-delivery-different-proofs-for-different-use-cases-e6daede195fb
+featured_image: /images/1__ycc__JGSdqG8JstYHFvB8IQ.jpeg
 ---
 
 ![](/images/1__ycc__JGSdqG8JstYHFvB8IQ.jpeg)

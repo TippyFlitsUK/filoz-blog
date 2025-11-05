@@ -5,6 +5,7 @@ date: '2024-06-17T17:30:21.152Z'
 categories: []
 keywords: []
 slug: filecoin-nv22-dragon-upgrade-ama-recap-8c1870518d33
+featured_image: /images/1__F6pcSvb__YV3Y3xdFXW6iDw.png
 ---
 
 ![](/images/1__F6pcSvb__YV3Y3xdFXW6iDw.png)

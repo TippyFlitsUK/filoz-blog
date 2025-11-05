@@ -7,6 +7,7 @@ date: '2025-04-30T14:40:34.195Z'
 categories: []
 keywords: []
 slug: the-f3-journey-now-that-f3-is-active-on-mainnet-there-are-follow-up-steps-to-take-a13a93268c29
+featured_image: /images/1__kF9FKm9uWsc4K2E3o__Zgkg.png
 ---
 
 ![](/images/1__kF9FKm9uWsc4K2E3o__Zgkg.png)

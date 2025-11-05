@@ -5,6 +5,7 @@ date: '2025-01-16T17:09:43.457Z'
 categories: []
 keywords: []
 slug: the-f3-journey-testing-insights-and-timeline-adjustments-f43acfd4ea72
+featured_image: /images/1__1ZPcJ__bmzbnW6bNM7St__Ow.png
 ---
 
 ![](/images/1__1ZPcJ__bmzbnW6bNM7St__Ow.png)

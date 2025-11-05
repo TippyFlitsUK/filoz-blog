@@ -5,6 +5,7 @@ date: '2025-10-17T16:24:41.807Z'
 categories: []
 keywords: []
 slug: the-f3-journey-network-version-27-followups-b22b876ae991
+featured_image: /images/1__zycrAzfsaON__I3LKpeMZjA.png
 ---
 
 ![](/images/1__zycrAzfsaON__I3LKpeMZjA.png)

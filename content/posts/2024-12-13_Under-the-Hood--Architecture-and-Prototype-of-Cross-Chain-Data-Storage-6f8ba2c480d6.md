@@ -5,6 +5,7 @@ date: '2024-12-13T19:43:40.122Z'
 categories: []
 keywords: []
 slug: under-the-hood-architecture-and-prototype-of-cross-chain-data-storage-6f8ba2c480d6
+featured_image: /images/1__sg__HkoNSHEAN0ubpDIovUg.png
 ---
 
 ![](/images/1__sg__HkoNSHEAN0ubpDIovUg.png)

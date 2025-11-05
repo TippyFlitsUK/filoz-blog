@@ -5,6 +5,7 @@ date: '2025-04-25T10:23:52.809Z'
 categories: []
 keywords: []
 slug: the-f3-journey-f3-comes-to-mainnet-launch-date-and-preparation-guide-2addc240aaf2
+featured_image: /images/1__Cj6eyHK4RYGUdU6D__neLZg.png
 ---
 
 ![](/images/1__Cj6eyHK4RYGUdU6D__neLZg.png)

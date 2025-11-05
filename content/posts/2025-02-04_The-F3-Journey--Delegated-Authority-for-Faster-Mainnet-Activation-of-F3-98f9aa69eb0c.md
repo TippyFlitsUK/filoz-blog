@@ -5,6 +5,7 @@ date: '2025-02-04T14:53:27.246Z'
 categories: []
 keywords: []
 slug: the-f3-journey-delegated-authority-for-faster-mainnet-activation-of-f3-98f9aa69eb0c
+featured_image: /images/1__yirtLz__EiGd2BoXDuaCiIw.png
 ---
 
 ![](/images/1__yirtLz__EiGd2BoXDuaCiIw.png)

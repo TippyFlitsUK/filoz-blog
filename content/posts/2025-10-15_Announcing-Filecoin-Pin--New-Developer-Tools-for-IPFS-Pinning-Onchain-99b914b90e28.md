@@ -7,6 +7,7 @@ date: '2025-10-15T15:38:14.425Z'
 categories: []
 keywords: []
 slug: announcing-filecoin-pin-new-developer-tools-for-ipfs-pinning-onchain-99b914b90e28
+featured_image: /images/1__S1JiuXJTXvNKREC0RTYeRA.png
 ---
 
 When [Filecoin](http://filecoin.io) first launched, it had an ambitious goal: to be the incentivized persistence layer for [IPFS](http://ipfs.tech). Changing how we address content, IPFS moved from fragile location-based URLs to verifiable content identifiers that never break. But without economic incentives or cryptographic guarantees, IPFS content only lasted as long as someone, somewhere, kept hosting it out of goodwill or individual interest.

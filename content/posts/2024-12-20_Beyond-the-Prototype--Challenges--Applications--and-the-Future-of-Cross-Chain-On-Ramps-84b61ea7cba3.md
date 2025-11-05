@@ -7,6 +7,7 @@ date: '2024-12-20T20:10:45.293Z'
 categories: []
 keywords: []
 slug: beyond-the-prototype-challenges-applications-and-the-future-of-cross-chain-on-ramps-84b61ea7cba3
+featured_image: /images/1__sg__HkoNSHEAN0ubpDIovUg.png
 ---
 
 ![](/images/1__sg__HkoNSHEAN0ubpDIovUg.png)

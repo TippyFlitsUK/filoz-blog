@@ -5,6 +5,7 @@ date: '2025-03-06T14:35:26.759Z'
 categories: []
 keywords: []
 slug: the-pdp-journey-an-in-depth-look-at-how-pdp-works-4b6079f4baad
+featured_image: /images/1__8gWfzmTPnq05WaaTNfvzmA.png
 ---
 
 ![](/images/1__8gWfzmTPnq05WaaTNfvzmA.png)

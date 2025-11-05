@@ -5,6 +5,7 @@ date: '2025-02-12T17:52:34.424Z'
 categories: []
 keywords: []
 slug: simplifying-onboarding-costs-a-new-proposal-for-the-filecoin-network-ee6131a6e7d0
+featured_image: /images/1__f4uUnfOTGFw__tJLKz__qoQQ.png
 ---
 
 ![](/images/1__f4uUnfOTGFw__tJLKz__qoQQ.png)

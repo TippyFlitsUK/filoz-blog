@@ -7,6 +7,7 @@ date: '2025-02-06T15:50:33.101Z'
 categories: []
 keywords: []
 slug: the-pdp-journey-a-refresher-on-proof-of-data-possession-and-its-path-to-mainnet-e6b481d9ad9a
+featured_image: /images/1__xZnptkLPaBjO5zecjFSdnA.png
 ---
 
 ![](/images/1__xZnptkLPaBjO5zecjFSdnA.png)
