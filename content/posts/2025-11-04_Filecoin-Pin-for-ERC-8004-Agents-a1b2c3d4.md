@@ -1,123 +1,63 @@
 ---
-title: Filecoin Pin for ERC-8004 Agents
-description: "How to use the Filecoin Pin CLI with ERC-8004 autonomous agents"
+title: "Making Services Discoverable with ERC-8004: Trustless Agent Registration with Filecoin Pin"
+description: "Exploring how to register existing services as ERC-8004 agents with verifiable persistent storage using Filecoin Pin"
 date: '2025-11-04T00:00:00.000Z'
 categories: []
 keywords: []
 slug: filecoin-pin-for-erc-8004-agents
-featured_image: /images/eip8004-base-explorer-nft.png
+featured_image: /images/erc8004-filecoin-pin-featured.png
 author: Matt Hamilton
 ---
 
-Learn how to register a trustless autonomous agent on the ERC-8004 Identity Registry with verifiable persistent storage using Filecoin Pin for the agent registration file.
+![Making Services Discoverable with ERC-8004](/images/erc8004-filecoin-pin-featured.png)
 
-***
+Matt Hamilton ([@HammerToe](https://x.com/HammerToe))
 
-## Overview
+I've been thinking a lot about agent metadata lately. Not the sexy stuff, not the AI models or the clever algorithms. The boring bit. Where do you put the JSON file that describes what an agent does?
 
-This tutorial walks you through registering an [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) compliant agent with cryptographically-verified persistent storage on Filecoin. You'll create an agent card (metadata describing your agent's capabilities), store it on Filecoin & IPFS using Filecoin Pin, and register it on-chain as an NFT on Base Sepolia.
+It's one of those problems that seems trivial until you actually try to solve it properly. You can't store it on-chain (too expensive). You can't use regular IPFS pinning (it might disappear). You can't use AWS (defeats the whole point of decentralisation). So what do you do?
 
-**What you'll learn:**
-- How to create an ERC-8004 compliant agent card
-- How to use Filecoin Pin for persistent, verifiable storage
-- How to register an agent on the ERC-8004 Identity Registry
-- How to verify Filecoin storage proofs and on-chain registration
+This week, I finally got a chance to properly explore this by registering GitHub's MCP server as an [ERC-8004](https://eips.ethereum.org/EIPS/eip-8004) agent with [Filecoin Pin](https://docs.filecoin.io/builder-cookbook/filecoin-pin). Here's what I learnt.
 
-**What you'll build:**
-A GitHub Integration Agent that references GitHub's official MCP server, demonstrating how real-world services can be integrated with ERC-8004.
+### The Problem
 
-***
+The issue is simple enough to explain: when you register an agent, you need to point to some metadata, a JSON file describing what it does, how to connect to it, what it's capable of. The `tokenURI` in ERC-8004 parlance.
 
-## Example Code and Scripts
+You can't store this on-chain. A typical agent card is 1–2KB of JSON. On Ethereum mainnet, that's prohibitively expensive. Even on L2s, you're looking at a chunk of change for every agent registration.
 
-For example code and helper scripts to help with using Filecoin Pin and agent registration, check out the quickstart repository:
+So you store it off-chain and reference it. Which raises the obvious question: where?
 
-**GitHub Repository**: [FilOzone/FilecoinPin-for-ERC8004](https://github.com/FilOzone/FilecoinPin-for-ERC8004)
+Generic IPFS pinning services? They can drop your content. No guarantees. Centralised storage like AWS? Single point of failure, ongoing costs, and frankly defeats the point. Store everything on-chain anyway? Not practical.
 
-***
+I needed something that would actually work long-term.
 
-## Why Filecoin Pin for Agent Storage?
+### Filecoin Pin
 
-Agent cards need persistent storage with provable guarantees. Unlike generic IPFS pinning services that may stop hosting your data without notice, Filecoin Pin provides:
+I'd been aware of Filecoin Pin for a while but hadn't actually tried it. The pitch is compelling: you get cryptographic proof that your data is being stored. Daily PDP (Proof of Data Possession) checks. Decentralised across Filecoin's storage network. IPFS compatible so it works with existing tooling.
 
-- ✅ **Cryptographic proof** your data is stored (daily PDP proofs)
-- ✅ **Ongoing verification** ensures storage persistence
-- ✅ **Decentralized** storage across a global network
-- ✅ **IPFS compatible** - works with existing tools and gateways
-- ✅ **Crypto payments** - onchain payments
-- ✅ **Limited time - sponsered storage coming soon** available for ERC-8004 builders
+The key bit is that last part about proof. With generic IPFS pinning, you're trusting that someone, somewhere, is keeping your content around. With Filecoin Pin, you can actually verify it. Daily proofs that storage providers are holding your data.
 
-***
+That matters for agent metadata. If you're building something meant to last years, you need more than hope.
 
-## Prerequisites
+### What I Actually Built
 
-### Required Tools
+For this experiment, I took GitHub's existing MCP server and registered it as an ERC-8004 agent. Not building something new, just making something that already exists discoverable through the registry.
 
-Before starting, you'll need:
+GitHub already runs a public MCP server at `https://api.githubcopilot.com/mcp/`. It provides repository management, issue tracking, PR tools. The usual GitHub stuff exposed through the Model Context Protocol. It's real, it's running, and anyone can use it.
 
-1. **Filecoin Pin CLI** - Follow the complete setup guide here:
-   - [Filecoin Pin CLI Tutorial](https://docs.filecoin.io/builder-cookbook/filecoin-pin/filecoin-pin-cli)
-   - This covers wallet creation, testnet tokens (tFIL and USDFC), and payment setup
+What it didn't have was an ERC-8004 identity. No way for other agents to discover it. No on-chain registration. No verifiable metadata storage.
 
-2. **Foundry** - Ethereum development toolkit for contract interactions
-   ```bash
-   curl -L https://foundry.paradigm.xyz | bash
-   foundryup
-   ```
+So I created an agent card (a JSON file describing the service), stored it on Filecoin Pin, and registered it on the Identity Registry on Base Sepolia. Now it has a verifiable, discoverable identity.
 
-3. **jq** (optional but recommended) - JSON processor for viewing outputs
-   ```bash
-   # macOS
-   brew install jq
+### The Agent Card
 
-   # Ubuntu/Debian
-   sudo apt-get install jq
-   ```
+The agent card is a JSON file that describes the MCP server's capabilities and how to connect to it:
 
-### Required Tokens
-
-You'll need testnet tokens on **two networks**:
-
-#### Filecoin Calibration Testnet
-- **tFIL** (testnet Filecoin) - For gas fees
-  - Request tFIL from [Filecoin Calibration Faucet](https://faucet.calibnet.chainsafe-fil.io/funds.html)
-  - Amount requested: 100 tFIL
-- **USDFC** (Filecoin stablecoin) - For storage payments
-  - Request test USDFC from [Filecoin Calibnet USDFC Faucet](https://forest-explorer.chainsafe.dev/faucet/calibnet_usdfc)
-  - Or Mint at [USDFC website](https://stg.usdfc.net) (requires at tFIL as collateral)
-  - Amount needed: ~5 USDFC
-
-#### Base Sepolia Testnet
-- **Sepolia ETH** - For NFT minting and registration
-  - Request test ETH on Base Sepolia on [Faucet](https://www.alchemy.com/faucets/base-sepolia)
-  - Amount needed: ~0.001 ETH
-
-> **NOTE!** The same Ethereum wallet works on both Filecoin Calibration and Base Sepolia. You only need one private key.
-
-### ERC-8004 Registry Address
-
-We'll be using the reference ERC-8004 Identity Registry deployed on the Base Sepolia testnet:
-```
-0x7177a6867296406881E20d6647232314736Dd09A
-```
-
-***
-
-## Step 1: Create Your Agent Card
-
-An agent card is a JSON file that describes your agent's capabilities, endpoints, and trust model according to the [ERC-8004 specification](https://eips.ethereum.org/EIPS/eip-8004).
-
-### Create the Agent Card JSON
-
-Create a file named `github-agent-card.json`:
-
-```bash
-cat > github-agent-card.json << 'EOF'
+```json
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "GitHub Integration Agent",
-  "description": "AI agent providing GitHub repository, issue, and pull request management capabilities through GitHub's official MCP server. Enables automated code review, issue triage, PR management, and repository analysis.",
-  "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+  "description": "AI agent providing GitHub repository, issue, and pull request management capabilities...",
   "endpoints": [
     {
       "name": "MCP",
@@ -127,578 +67,208 @@ cat > github-agent-card.json << 'EOF'
         "tools": [
           {
             "name": "repository_management",
-            "description": "Browse code, search files, analyze commits across GitHub repositories"
+            "description": "Browse code, search files, analyze commits..."
           },
           {
             "name": "issue_management",
-            "description": "Create, update, search, and manage GitHub issues with AI assistance"
+            "description": "Create, update, search, and manage GitHub issues..."
           },
           {
             "name": "pull_request_management",
-            "description": "Review PRs, manage approvals, merge conflicts, and code reviews"
+            "description": "Review PRs, manage approvals, merge conflicts..."
           }
         ]
       }
-    },
-    {
-      "name": "agentWallet",
-      "endpoint": "eip155:84532:0x0000000000000000000000000000000000000000"
     }
   ],
-  "registrations": [],
-  "supportedTrust": [
-    "reputation"
-  ]
+  "supportedTrust": ["reputation"]
 }
-EOF
 ```
 
-### Validate the JSON
+This agent card gets uploaded to Filecoin Pin, which returns a CID (Content Identifier). That CID then gets registered on-chain as `ipfs://<CID>/github-agent-card.json`, effectively creating a verifiable, discoverable identity for GitHub's existing MCP server.
 
-Verify your agent card is valid JSON:
+### The Complete Workflow
 
-```bash
-jq . github-agent-card.json
-```
+Here's how the pieces fit together:
 
-You should see the formatted JSON output with syntax highlighting.
-
-### Understanding the Agent Card Structure
-
-Key fields in the agent card:
-
-- **`type`** - Links to the ERC-8004 specification version
-- **`name`** - Human-readable name for your agent
-- **`description`** - What the agent does
-- **`image`** - Avatar or logo URL
-- **`endpoints`** - Array of service endpoints:
-  - **MCP endpoint** - Points to GitHub's official MCP server
-  - **agentWallet** - The agent's wallet address (chain:chainId:address format)
-- **`capabilities`** - Tools and functions the agent provides
-- **`supportedTrust`** - Trust mechanisms (reputation, stake, etc.)
-
-> **💡 Note**: This example uses GitHub's real public MCP server at `https://api.githubcopilot.com/mcp/`. You can replace this with your own MCP server endpoint.
-
-***
-
-## Step 2: Upload to Filecoin Pin
-
-Now we'll store the agent card on Filecoin with PDP proofs.
-
-### Setup Payment System
-
-If this is your first time using Filecoin Pin, set up the payment system:
-
-```bash
-export PRIVATE_KEY="0x..."  # Your wallet private key
-filecoin-pin payments setup --auto
-```
-
-This configures your wallet to pay for storage automatically.
-This may take a few minutes to complete.
-
-You'll see output similar to:
-
-```
-% filecoin-pin payments setup --auto
-┌  Filecoin Onchain Cloud Payment Setup
-│
-│  Running in auto mode...
-│
-◇  ✓ Connected to calibration
-│
-◇  ✓ Balance check complete
-│
-│  Account:
-│    Wallet: 0xDc3E85b5d25c9200F099Cc9d38769e9cCb445D8f
-│    Network: calibration
-│  Balances:
-│    FIL: 100.0000 tFIL
-│    USDFC wallet: 9.0000 USDFC
-│    USDFC deposited: 0.9000 USDFC
-│
-◇  ✓ WarmStorage permissions configured
-│
-│  Transaction:
-│    0x3cda50059a974ee5534e585306cfb8675165597f11a997637e26e25ba4a98c5f
-│
-◇  ✓ Deposited 0.1000 USDFC
-│
-│  Transaction details:
-│    Deposit: 0xfd7b1d2a8071f1e0bf3f576510f5eab38b9573327740ceac094f7c8f1aee179d
-│
-◇  ━━━ Configuration Summary ━━━
-│
-│  Network: calibration
-│  Deposit: 1.0000 USDFC
-│  Storage: ~558.5 GiB for 1 month
-│  Status: Ready to upload
-│
-└  Payment setup completed successfully
-```
-
-> **NOTE!** You only need to run this once per wallet. Subsequent uploads will use the existing payment configuration.
-
-### Upload Your Agent Card
-
-Upload the agent card to Filecoin:
+### 1. Upload to Filecoin Pin
 
 ```bash
 filecoin-pin add --auto-fund github-agent-card.json
 ```
 
-The `--auto-fund` flag ensures your storage provider wallet has sufficient funds.
+This uploads your agent card and returns:
 
-You'll see output similar to:
+- **Root CID** — The IPFS identifier
+- **Dataset ID** — For checking PDP proof status
+- **Storage deal confirmation** — Proof it's being stored
 
-```
-% filecoin-pin add --auto-fund github-agent-card.json
-┌  Filecoin Pin Add
-│
-◇  ✓ File validated (1.3 KB)
-│
-◇  ✓ Connected to calibration
-│
-◇  ✓ Payment capacity verified
-│
-◇  ✓ File packed with root CID: bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di
-│
-◇  ✓ IPFS content loaded (1.5 KB)
-│
-◇  ✓ Funding requirements met
-│
-◇  ✓ Storage context ready
-│
-◇  ━━━ Add Complete ━━━
-│
-│  Network: calibration
-│
-│  Add Details
-│    File: github-agent-card.json
-│    Size: 1.5 KB
-│    Root CID: bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di
-│
-│  Filecoin Storage
-│    Piece CID: bafkzcibdricannieziik7jobrwqia4qfq6g7cwxfspsppv5aa76uev4u6ek7awz5
-│    Piece ID: 0
-│    Data Set ID: 933
-│
-│  Storage Provider
-│    Provider ID: 23
-│    Name: Axiaoming
-│    Direct Download URL: https://pdp.oplian.com/piece/bafkzcibdricannieziik7jobrwqia4qfq6g7cwxfspsppv5aa76uev4u6ek7awz5
-│
-│  Transaction
-│    Hash: 0x9ae009d53165b2a01c9ae2e3fb0a2d11da4b90dc5f9acc31e6c4660e3d89606f
-│
-└  Add completed successfully
+The `--auto-fund` flag ensures your storage provider wallet has sufficient USDFC (Filecoin stablecoin) to pay for storage.
 
-```
-
-> **NOTE!** Data storage on the Calibration Testnet has a retention period of approximately 1 week. For production use and to ensure your data remains available, please switch to Filecoin mainnet.
-
-### Save Important Values
-
-Copy these values from the output - you'll need them later:
-
-- **Root CID** - The IPFS content identifier (e.g., `bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di`).
-- **Dataset ID** - For checking PDP proof status (e.g., `933`)
-
-> **⚠️ IMPORTANT**: The Token URI for ERC-8004 registration must include the filename! Format it as:
-> ```
-> ipfs://<ROOT_CID>/github-agent-card.json
-> ```
-
-### Verify IPFS Retrieval
-
-Test that your agent card is accessible via IPFS (it may take a few minutes to propogate!):
+### 2. Register on Base Sepolia
 
 ```bash
-# Replace <ROOT_CID> with your actual CID
-curl -s "https://ipfs.io/ipfs/<ROOT_CID>/github-agent-card.json" | jq .
-```
-
-You should see your agent card JSON returned:
-
-```
-% curl -s "https://ipfs.io/ipfs/bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di/github-agent-card.json" | jq .
-{
-  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
-  "name": "GitHub Integration Agent",
-  "description": "AI agent providing GitHub repository, issue, and pull request management capabilities through GitHub's official MCP server. Enables automated code review, issue triage, PR management, and repository analysis.",
-  "image": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-  "endpoints": [
-    {
-      "name": "MCP",
-      "endpoint": "https://api.githubcopilot.com/mcp/",
-      "version": "1.0.0",
-      "capabilities": {
-        "tools": [
-          {
-            "name": "repository_management",
-            "description": "Browse code, search files, analyze commits across GitHub repositories"
-          },
-          {
-            "name": "issue_management",
-            "description": "Create, update, search, and manage GitHub issues with AI assistance"
-          },
-          {
-            "name": "pull_request_management",
-            "description": "Review PRs, manage approvals, merge conflicts, and code reviews"
-          }
-        ]
-      }
-    },
-    {
-      "name": "agentWallet",
-      "endpoint": "eip155:84532:0x0000000000000000000000000000000000000000"
-    }
-  ],
-  "registrations": [],
-  "supportedTrust": [
-    "reputation"
-  ]
-}
-```
-
-***
-
-## Step 3: Register on Base Sepolia
-
-Now we'll register the agent on-chain as an ERC-8004 NFT on Base Sepolia.
-
-### Set Environment Variables
-
-```bash
-export PRIVATE_KEY="0x..."  # Your wallet private key
-export TOKEN_URI="ipfs://<ROOT_CID>/github-agent-card.json"  # From Step 2
-export IDENTITY_REGISTRY="0x7177a6867296406881E20d6647232314736Dd09A"
-export BASE_SEPOLIA_RPC="https://sepolia.base.org"
-```
-
-> **⚠️ SECURITY WARNING**: Never commit your private key to version control or share it publicly.
-
-### Check Your Balance
-
-Ensure you have sufficient Base Sepolia ETH:
-
-```bash
-cast balance <YOUR_WALLET_ADDRESS> --rpc-url $BASE_SEPOLIA_RPC --ether
-```
-
-You should have at least 0.001 ETH for the registration transaction.
-
-### Register the Agent
-
-Send the registration transaction:
-
-```bash
-cast send $IDENTITY_REGISTRY \
+cast send 0x7177a6867296406881E20d6647232314736Dd09A \
   "register(string)" \
-  "$TOKEN_URI" \
-  --rpc-url $BASE_SEPOLIA_RPC \
+  "ipfs://<CID>/github-agent-card.json" \
+  --rpc-url https://sepolia.base.org \
   --private-key $PRIVATE_KEY
 ```
 
-You'll see output similar to:
+This mints an ERC-721 NFT representing your agent on the ERC-8004 Identity Registry.
 
-```
-% cast send $IDENTITY_REGISTRY \
-  "register(string)" \
-  "$TOKEN_URI" \
-  --rpc-url $BASE_SEPOLIA_RPC \
-  --private-key $PRIVATE_KEY
+**Why Base Sepolia?**
 
-blockHash            0x54ee1b796e6062e6e78676dcb1cd59c200a80d710c42ebff09f720f3cdf8e4f4
-blockNumber          33187042
-contractAddress
-cumulativeGasUsed    3223263
-effectiveGasPrice    1000100
-from                 0xDc3E85b5d25c9200F099Cc9d38769e9cCb445D8f
-gasUsed              176805
-logs                 [{"address":"0x7177a6867296406881e20d6647232314736dd09a","topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef","0x0000000000000000000000000000000000000000000000000000000000000000","0x000000000000000000000000dc3e85b5d25c9200f099cc9d38769e9ccb445d8f","0x0000000000000000000000000000000000000000000000000000000000000038"],"data":"0x","blockHash":"0x54ee1b796e6062e6e78676dcb1cd59c200a80d710c42ebff09f720f3cdf8e4f4","blockNumber":"0x1fa64e2","blockTimestamp":"0x690828a4","transactionHash":"0x950c3df5003a5ac827edc2e6f806e91d3f45fb05e82a9defc5afb486bf1bd8bb","transactionIndex":"0xf","logIndex":"0x50","removed":false},{"address":"0x7177a6867296406881e20d6647232314736dd09a","topics":["0xca52e62c367d81bb2e328eb795f7c7ba24afb478408a26c0e201d155c449bc4a","0x0000000000000000000000000000000000000000000000000000000000000038","0x000000000000000000000000dc3e85b5d25c9200f099cc9d38769e9ccb445d8f"],"data":"0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006768747470733a2f2f697066732e696f2f697066732f626166796265696868616c35686c62796c6b69626e696967366a37327764726d376c72346e66367a34376e61746c6568326a6b796f7372673764692f6769746875622d6167656e742d636172642e6a736f6e00000000000000000000000000000000000000000000000000","blockHash":"0x54ee1b796e6062e6e78676dcb1cd59c200a80d710c42ebff09f720f3cdf8e4f4","blockNumber":"0x1fa64e2","blockTimestamp":"0x690828a4","transactionHash":"0x950c3df5003a5ac827edc2e6f806e91d3f45fb05e82a9defc5afb486bf1bd8bb","transactionIndex":"0xf","logIndex":"0x51","removed":false}]
-logsBloom            0x00000000000000400000000000000000000000000000000000000000000000000000000000000000000020200000000000000000000000000000004000200000000000000000000000000008000000000000000000000000000000000000000000000000020000000000000000000800000000002000000000000010000000000000000000000000000000000000000080000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000002000000000000000000000000000000001000000000000000000020000000000000010000000000000000000000010000000000000200000000000000
-root
-status               1 (success)
-transactionHash      0x950c3df5003a5ac827edc2e6f806e91d3f45fb05e82a9defc5afb486bf1bd8bb
-transactionIndex     15
-type                 2
-blobGasPrice
-blobGasUsed
-to                   0x7177a6867296406881E20d6647232314736Dd09A
-l1BaseFeeScalar      1101
-l1BlobBaseFee        1
-l1BlobBaseFeeScalar  659851
-l1Fee                86
-l1GasPrice           9
-l1GasUsed            2557
+- Low gas costs (it's an L2)
+- Official ERC-8004 reference implementation is deployed there
+- Easy to get testnet ETH from faucets
 
-```
+### 3. Verify PDP Proofs
 
-A `status` of `1` means the transaction succeeded and your agent NFT was minted!
-
-### Get Your Agent ID
-
-Query the registry to find your agent's ID:
+This shows you the proof status:
 
 ```bash
-cast call $IDENTITY_REGISTRY \
-  "totalAgents()" \
-  --rpc-url $BASE_SEPOLIA_RPC
+Dataset ID: 933
+Root CID: bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di
+Storage Provider: f01234
+Status: Active
+Last PDP Proof: 2025-01-15 14:32:10 UTC
+Next Proof: 2025-01-16 14:32:10 UTC
 ```
 
-This returns the total number of registered agents. Your agent ID is this number (the latest registration):
+**Daily proofs** mean you can always verify your agent metadata is still being stored. This is the cryptographic guarantee that sets Filecoin Pin apart.
+
+### 4. Agent Discovery
+
+Now any application can discover and use your agent:
 
 ```bash
-% cast call $IDENTITY_REGISTRY \
-  "totalAgents()" \
-  --rpc-url $BASE_SEPOLIA_RPC
-0x0000000000000000000000000000000000000000000000000000000000000038
+# Query the registry
+cast call 0x7177a6867296406881E20d6647232314736Dd09A \
+  "tokenURI(uint256)" 55 \
+  --rpc-url https://sepolia.base.org
+
+# Returns: ipfs://bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di/github-agent-card.json
+
+# Fetch the agent card
+curl -s "https://ipfs.io/ipfs/bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di/github-agent-card.json" | jq .
 ```
 
-### Convert Agent ID to Decimal
-
-The query returns a hex value (e.g., `0x38`). Convert to decimal:
-
-```bash
-printf "%d\n" 0x38  # Returns: 56
-```
-
-### Verify Registration
-
-Confirm your agent is registered correctly:
-
-```bash
-cast call $IDENTITY_REGISTRY \
-  "tokenURI(uint256)" \
-  56 \
-  --rpc-url $BASE_SEPOLIA_RPC
-```
-
-You will get output similar to:
-
-```
-% cast call $IDENTITY_REGISTRY \
-  "totalAgents()" \
-  --rpc-url $BASE_SEPOLIA_RPC
-0x0000000000000000000000000000000000000000000000000000000000000038
-matt@MacBook-Pro-2 demo1 % cast call $IDENTITY_REGISTRY \
-  "tokenURI(uint256)" \
-  56 \
-  --rpc-url $BASE_SEPOLIA_RPC
-0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006768747470733a2f2f697066732e696f2f697066732f626166796265696868616c35686c62796c6b69626e696967366a37327764726d376c72346e66367a34376e61746c6568326a6b796f7372673764692f6769746875622d6167656e742d636172642e6a736f6e00000000000000000000000000000000000000000000000000
-```
-
-The output is ABI-encoded. Decode it:
-
-```bash
-cast --abi-decode "f()(string)" <OUTPUT_FROM_ABOVE>
-```
-
-You should see your Token URI returned: `ipfs://<ROOT_CID>/github-agent-card.json`:
-
-```bash
-% cast --abi-decode "f()(string)" 0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006768747470733a2f2f697066732e696f2f697066732f626166796265696868616c35686c62796c6b69626e696967366a37327764726d376c72346e66367a34376e61746c6568326a6b796f7372673764692f6769746875622d6167656e742d636172642e6a736f6e00000000000000000000000000000000000000000000000000
-"https://ipfs.io/ipfs/bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di/github-agent-card.json"
-```
-
-### View on Block Explorer
-
-Visit your agent on the Base Sepolia block explorer:
-
-```
-https://sepolia.basescan.org/token/0x7177a6867296406881E20d6647232314736Dd09A?a=<AGENT_ID_DECIMAL>
-```
-
-Replace `<AGENT_ID_DECIMAL>` with your agent's ID (e.g., `56`).
-
-<img src="/images/eip8004-base-explorer-nft.png" alt="Base Sepolia block explorer, showing NFT minted" style="width: 1000px !important; max-width: 1000px !important; display: block !important;">
-
-***
-
-## Step 4: Check On-chain Storage Proofs
-
-Finally, let's verify that your agent card is persistently stored with cryptographic proofs.
-
-### Check PDP Proof Status
-
-Use the Dataset ID from Step 2:
-
-```bash
-filecoin-pin data-set 933  # Replace with your Dataset ID
-```
-
-You'll see output like:
-
-```
-% filecoin-pin data-set 933
-┌  Filecoin Onchain Cloud Data Sets
-│
-◇  ━━━ Data Sets ━━━
-│
-│  Data Set #933 • live
-│    Managed by Warm Storage: yes
-│    CDN add-on: disabled
-│    Pieces stored: 2
-│    Leaf count: 96
-│    Total size: 3.0 KB
-│    Client data set ID: 0
-│    PDP rail ID: 1529
-│    CDN rail ID: none
-│    Cache-miss rail ID: none
-│    Payer: 0xDc3E85b5d25c9200F099Cc9d38769e9cCb445D8f
-│    Payee: 0x6ABcF87adC44e27582a3e2bB5EDe97bcFe40043F
-│    Service provider: 0x6ABcF87adC44e27582a3e2bB5EDe97bcFe40043F
-│    Provider: Axiaoming (ID 23)
-│    Commission: 0.00%
-│
-│  Provider Service
-│    Service URL: https://pdp.oplian.com
-│    Min piece size: 1.0 MB
-│    Max piece size: 1.0 GB
-│    Storage price: < 0.0001 USDFC/TiB/month
-│    Min proving period: 30 epochs
-│    Location: C=CN;ST=Hong Kong SAR;L=Hong Kong
-│    Payment token: USDFC (native)
-│
-│  Metadata
-│      source: filecoin-pin
-│      withIPFSIndexing: (empty)
-│
-│
-│  Pieces
-│    Total pieces: 2
-│    Unique CommPs: 1
-│    Unique root CIDs: 1
-│
-│    #0
-│      CommP: bafkzcibdricannieziik7jobrwqia4qfq6g7cwxfspsppv5aa76uev4u6ek7awz5
-│      Root CID: bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di
-│    #1
-│      CommP: bafkzcibdricannieziik7jobrwqia4qfq6g7cwxfspsppv5aa76uev4u6ek7awz5
-│      Root CID: bafybeihhal5hlbylkibniig6j72wdrm7lr4nf6z47natleh2jkyosrg7di
-│
-└  Data set inspection complete
+The agent card tells them how to connect to the GitHub MCP server and what capabilities are available.
 
-```
+### Why This Matters for Builders
 
-> **💡 Note**: PDP proofs may take up to 24 hours to begin after initial upload. This is normal.
+This is still very much a work in progress. Everything here is running on testnets, and we're actively figuring out what the production infrastructure should look like. But having said that, the pattern is already useful for making any existing service discoverable as an ERC-8004 agent with verifiable, persistent metadata.
 
-### Test Complete Workflow
+### For Agent Builders
 
-Simulate how another agent would discover and use your agent:
+You get:
 
-```bash
-# Step 1: Query total agents
-TOTAL=$(cast call $IDENTITY_REGISTRY "totalAgents()" --rpc-url $BASE_SEPOLIA_RPC)
-echo "Total agents: $(printf "%d" $TOTAL)"
+- **Peace of mind** — Your agent metadata won't disappear
+- **Verifiability** — Anyone can check that storage is active
+- **Decentralisation** — No single point of failure
+- **Standards compliance** — Works with ERC-8004 ecosystem
 
-# Step 2: Get your agent's Token URI
-URI_RAW=$(cast call $IDENTITY_REGISTRY "tokenURI(uint256)" 55 --rpc-url $BASE_SEPOLIA_RPC)
-URI=$(cast --abi-decode "f()(string)" $URI_RAW)
-echo "Token URI: $URI"
+### For Agent Users
 
-# Step 3: Extract CID and fetch agent card
-curl -s "https://ipfs.io/ipfs/<ROOT_CID>/github-agent-card.json" | jq '.endpoints[]'
-```
+They get:
 
-### Summary
+- **Trust** — Can verify agents are legitimate and persistent
+- **Discovery** — Find agents via on-chain registry
+- **Composability** — Combine multiple agents together
+- **Transparency** — See full agent capabilities before using
 
-✅ Your agent is now:
-- 🔒 **Persistently stored** on Filecoin with cryptographic PDP proofs
-- 🌐 **Registered on-chain** as an ERC-8004 NFT on Base Sepolia
-- 🔍 **Discoverable** via the Identity Registry by any third party
-- ✅ **Verifiable** - anyone can check storage proofs and on-chain data
-- 🚀 **Ready to use** by other agents and applications
+### For the Ecosystem
 
-***
+We get:
 
-## Troubleshooting
+- **Infrastructure** for the emerging agent economy
+- **Interoperability** via ERC-8004 standard
+- **Long-term viability** with provable storage
+- **Foundation** for reputation and validation systems
 
-### Issue: `filecoin-pin: command not found`
+Whilst these lists look a bit like marketing bullet points, each of these actually matters. The infrastructure piece is what I find most interesting, because we're finally building the plumbing that makes agent composition practical.
 
-**Solution**: Install the Filecoin Pin CLI:
-```bash
-npm install -g filecoin-pin
-```
+We'd love to have more developers try this out and give us feedback on what works and what doesn't.
 
-### Issue: `Insufficient USDFC`
+### Try It Yourself
 
-**Solution**: Request more test USDFC at [Filecoin Calibnet USDFC Faucet](https://forest-explorer.chainsafe.dev/faucet/calibnet_usdfc)
+So if you want to give this a go, I've put together a complete tutorial that walks you through every step:
 
-### Issue: `Transaction reverted` on Base Sepolia
+[**Register an ERC-8004 Agent with Filecoin Pin Storage**](https://docs.filecoin.io/builder-cookbook/filecoin-pin/erc-8004-agent-registration)
 
-**Solution**: Check your Base Sepolia ETH balance:
-```bash
-cast balance <YOUR_ADDRESS> --rpc-url https://sepolia.base.org --ether
-```
-Get more from the [faucet](https://www.alchemy.com/faucets/base-sepolia) if needed.
+The tutorial includes:
 
-### Issue: IPFS retrieval is slow or fails
+- Complete prerequisites and token setup
+- Step-by-step commands with expected outputs
+- Screenshot indicators showing what you should see
+- Troubleshooting for common issues
+- Example agent card you can customise
 
-**Solution**: IPFS propagation can take a few minutes. Try different gateways:
-```bash
-curl -s "https://ipfs.io/ipfs/<CID>/github-agent-card.json" | jq .
-curl -s "https://gateway.pinata.cloud/ipfs/<CID>/github-agent-card.json" | jq .
-curl -s "https://cloudflare-ipfs.com/ipfs/<CID>/github-agent-card.json" | jq .
-```
+Everything you need is in the tutorial. It's designed to take you from zero to a registered agent in about 30–45 minutes. Having said that, if it's your first time working with Filecoin or Base Sepolia, you might want to give yourself a bit more time to get familiar with the faucets and tooling.
 
-### Issue: PDP proofs not showing
+<div style="position: relative; padding-bottom: 75%; height: 0;"><iframe src="https://www.loom.com/embed/d004f3d1b1c6419fbc8c73fbbe492c6b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
-**Solution**: PDP proofs can take up to 24 hours to begin after upload. This is normal - your data is still stored, proofs just take time to generate. Check back later with:
-```bash
-filecoin-pin data-set <YOUR_DATASET_ID>
-```
+### What's Next?
 
-### Issue: Token URI doesn't include filename
+Well, this is just the beginning. The ERC-8004 standard includes three registries:
 
-**Solution**: The Token URI must include the full path including filename. Correct format:
-```
-ipfs://<CID>/github-agent-card.json
-```
+1. **Identity Registry** (what I demonstrated here) — Register and discover agents
+2. **Reputation Registry** (coming) — Build trust through verified actions
+3. **Validation Registry** (coming) — Third-party verification of agent behaviour
 
-If you registered with the wrong format, you'll need to register a new agent with the corrected Token URI.
+Combining these with provable storage creates the foundation for a real agent economy. I think the reputation piece is going to be particularly interesting, because that's where agents can start to build track records that others can actually verify.
 
-***
+### Ideas to Explore
 
-## What's Next?
+Some things I'm thinking about:
 
-Now that your agent is registered with verifiable persistent storage, you can:
+- **Multi-agent systems** — Agents that discover and compose with other agents
+- **Reputation building** — Agents that accumulate verified track records
+- **Validator networks** — Decentralised verification of agent behaviour
+- **Agent marketplaces** — Discover and use agents based on capabilities and reputation
+- **Cross-chain agents** — Agents that operate across multiple networks
 
-### Build Your Own Agent
+There's probably a lot more that I haven't thought of yet. If any of this sounds like something you're working on, I'd love to hear about it.
 
-1. **Create custom agent cards** for your services
-2. **Deploy your own MCP server** and reference it in the agent card
-3. **Register multiple agents** for different capabilities
-4. **Update agent cards** by uploading new versions (CID changes) and updating on-chain
+### The Bigger Picture
 
-### Explore ERC-8004 Features
+I think we're at an inflection point. AI agents are becoming capable enough to act autonomously, but they need decentralised infrastructure to be truly trustless.
 
-- **Reputation Registry** - Build reputation for your agents
-- **Validation Registry** - Add validators to verify agent behavior
-- **Multi-agent coordination** - Discover and compose multiple agents
+By solving the storage problem with Filecoin Pin and the identity problem with ERC-8004, we're enabling a new category of applications:
 
-### Join the Community
+- **Autonomous trading agents** with verifiable track records
+- **Code review agents** that build reputation over time
+- **Data analysis agents** that can be audited and verified
+- **Coordination agents** that compose multiple specialised agents
+- **Personal assistants** that users actually own and control
 
-- **Filecoin Builders**: [on telegram](https://t.me/+Xj6_zTPfcUA4MGQ1); [on Slack](https://filecoinproject.slack.com/archives/CRK2LKYHW)
-- **ERC-8004 Discussion**: [GitHub Discussions](https://github.com/ethereum/EIPs/issues/8004)
-- **Filecoin Pin**: [Documentation](https://docs.filecoin.io/builder-cookbook/filecoin-pin)
-- **Builder Channels**: Join ERC-8004 builder communities
+The key insight? **Agents aren't just smart contracts. They're long-lived entities that need persistent, verifiable infrastructure.** It has been a challenge working out what that infrastructure looks like, but I think the combination of ERC-8004 and Filecoin Pin gets us pretty close.
 
-### Sponsered Storage for ERC-8004 Builders
+### Getting Involved
 
-Coming soon, stay tuned!
+The ERC-8004 ecosystem is just getting started, and we need builders to shape it.
 
-***
+**If you want to try this out:**
 
-## Additional Resources
+1. Follow the [tutorial](https://docs.filecoin.io/builder-cookbook/filecoin-pin/erc-8004-agent-registration) to register your first agent
+2. Join the [ERC-8004 discussions](https://github.com/ethereum/EIPs/issues/8004)
+3. Check out the [reference implementation](https://github.com/ChaosChain/trustless-agents-erc-ri)
+4. Explore [Filecoin Pin documentation](https://docs.filecoin.io/builder-cookbook/filecoin-pin)
 
-- [**ERC-8004 Specification**](https://eips.ethereum.org/EIPS/eip-8004)
-- [**Reference Implementation**](https://github.com/ChaosChain/trustless-agents-erc-ri)
-- [**Filecoin Pin CLI Tutorial**](https://docs.filecoin.io/builder-cookbook/filecoin-pin/filecoin-pin-cli)
-- [**Base Sepolia Explorer**](https://sepolia.basescan.org)
-- [**GitHub MCP Server**](https://github.com/github/github-mcp-server)
+**Some things you could build:**
 
-***
+- Register your existing services as ERC-8004 agents
+- Build agent discovery tools
+- Develop reputation systems
+- Create validator networks
 
-**Happy building!** 🚀
+The infrastructure is ready. The standard is here. So if any of this sounds like it would be useful for what you're building, then get in touch and let's chat!
+
+### Resources
+
+- **Tutorial**: [Register an ERC-8004 Agent with Filecoin Pin](https://docs.filecoin.io/builder-cookbook/filecoin-pin/)
+- **ERC-8004 Specification**: [https://eips.ethereum.org/EIPS/eip-8004](https://eips.ethereum.org/EIPS/eip-8004)
+- **Filecoin Pin CLI**: [https://docs.filecoin.io/builder-cookbook/filecoin-pin/filecoin-pin-cli](https://docs.filecoin.io/builder-cookbook/filecoin-pin/filecoin-pin-cli)
+- **Base Sepolia Faucet**: [https://www.alchemy.com/faucets/base-sepolia](https://www.alchemy.com/faucets/base-sepolia)
+- **Example Agent**: [View on Basescan](https://sepolia.basescan.org/token/0x7177a6867296406881E20d6647232314736Dd09A?a=55)
