@@ -12,6 +12,10 @@ env:
 jobs:
   build-and-pin:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,6 +36,13 @@ jobs:
           echo "Site built successfully"
           ls -lh public/
 
+          # Verify public directory has content
+          if [ ! -d "./public/" ] || [ -z "$(ls -A ./public/)" ]; then
+            echo "Error: ./public/ directory is missing or empty."
+            exit 1
+          fi
+          echo "✓ Public directory contains $(find ./public -type f | wc -l) files"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -47,8 +58,15 @@ jobs:
           PRIVATE_KEY: ${{ secrets.FILECOIN_PRIVATE_KEY }}
         run: |
           echo "Configuring Filecoin Pin payments..."
-          filecoin-pin payments setup --auto
-          echo "Payment configuration complete"
+          echo "PRIVATE_KEY is set: $([ -n "$PRIVATE_KEY" ] && echo "YES" || echo "NO")"
+
+          # Run setup and capture output
+          if filecoin-pin payments setup --auto; then
+            echo "✓ Payment configuration complete"
+          else
+            echo "❌ Payment configuration failed"
+            exit 1
+          fi
 
       - name: Pin site to Filecoin
         env:
@@ -56,19 +74,27 @@ jobs:
           PROVIDER_ID: 9
         run: |
           echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 9)..."
+          echo "PRIVATE_KEY is set: $([ -n "$PRIVATE_KEY" ] && echo "YES" || echo "NO")"
+
           OUTPUT=$(filecoin-pin add ./public/ --provider-id 9 2>&1)
+          EXIT_CODE=$?
+
+          echo "=== Filecoin Pin Output ==="
           echo "$OUTPUT"
+          echo "=== End Output (Exit Code: $EXIT_CODE) ==="
 
           # Extract CID from output
           CID=$(echo "$OUTPUT" | grep -oP 'bafyb\w+' | head -1)
 
           if [ -z "$CID" ]; then
-            echo "Error: Could not extract CID from output"
+            echo "❌ Error: Could not extract CID from filecoin-pin output"
+            echo "This usually means the pinning command failed."
+            echo "Please check the output above for error messages."
             exit 1
           fi
 
           echo "CID=$CID" >> $GITHUB_ENV
-          echo "Site pinned successfully!"
+          echo "✓ Site pinned successfully!"
           echo "CID: $CID"
 
       - name: Update DNSLink via deSEC
@@ -80,16 +106,16 @@ jobs:
 
           echo "Updating DNSLink TXT record for ${DOMAIN}..."
 
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
             "https://desec.io/api/v1/domains/${DOMAIN}/rrsets/" \
             -H "Authorization: Token ${DESEC_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d '{
-              "records": ["dnslink=/ipfs/'${CID}'"],
-              "ttl": 300,
+            -d '[{
+              "subname": "_dnslink",
               "type": "TXT",
-              "subname": "_dnslink"
-            }')
+              "ttl": 300,
+              "records": ["\"dnslink=/ipfs/'${CID}'\""]
+            }]')
 
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
 
