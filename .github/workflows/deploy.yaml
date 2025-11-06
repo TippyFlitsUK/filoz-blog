@@ -71,6 +71,37 @@ jobs:
           echo "Site pinned successfully!"
           echo "CID: $CID"
 
+      - name: Update DNSLink via deSEC
+        env:
+          DESEC_TOKEN: ${{ secrets.DESEC_TOKEN }}
+        run: |
+          CID="${{ env.CID }}"
+          DOMAIN="deblog.filoz.org"
+
+          echo "Updating DNSLink TXT record for ${DOMAIN}..."
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT \
+            "https://desec.io/api/v1/domains/${DOMAIN}/rrsets/" \
+            -H "Authorization: Token ${DESEC_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "records": ["dnslink=/ipfs/'${CID}'"],
+              "ttl": 300,
+              "type": "TXT",
+              "subname": "_dnslink"
+            }')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 201 ]; then
+            echo "✓ Successfully updated DNSLink to: dnslink=/ipfs/${CID}"
+            echo "DNSLINK_UPDATED=true" >> $GITHUB_ENV
+          else
+            echo "✗ Failed to update DNSLink. HTTP Code: ${HTTP_CODE}"
+            echo "$RESPONSE"
+            echo "DNSLINK_UPDATED=false" >> $GITHUB_ENV
+          fi
+
       - name: Generate deployment info
         run: |
           cat > deployment-info.txt <<EOF
@@ -81,13 +112,18 @@ jobs:
           Branch: ${{ github.ref_name }}
           CID: ${{ env.CID }}
 
-          Access URLs:
+          Access URLs (Direct CID):
           - https://ipfs.io/ipfs/${{ env.CID }}
           - https://dweb.link/ipfs/${{ env.CID }}
-          - https://cloudflare-ipfs.com/ipfs/${{ env.CID }}
           - https://${{ env.CID }}.ipfs.dweb.link
 
-          Note: It may take a few minutes for the content to propagate across IPFS gateways.
+          Access URLs (DNSLink):
+          - https://dweb.link/ipns/deblog.filoz.org
+          - https://ipfs.io/ipns/deblog.filoz.org
+
+          DNSLink Status: ${{ env.DNSLINK_UPDATED }}
+
+          Note: It may take a few minutes for the content to propagate across IPFS gateways and DNS.
           EOF
 
           cat deployment-info.txt
@@ -116,18 +152,29 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**CID:** \`${{ env.CID }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**IPFS Gateway URLs:**" >> $GITHUB_STEP_SUMMARY
+          echo "**DNSLink URLs (Recommended):**" >> $GITHUB_STEP_SUMMARY
+          echo "- https://dweb.link/ipns/deblog.filoz.org" >> $GITHUB_STEP_SUMMARY
+          echo "- https://ipfs.io/ipns/deblog.filoz.org" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Direct CID URLs:**" >> $GITHUB_STEP_SUMMARY
           echo "- https://ipfs.io/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
           echo "- https://dweb.link/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
-          echo "- https://cloudflare-ipfs.com/ipfs/${{ env.CID }}" >> $GITHUB_STEP_SUMMARY
           echo "- https://${{ env.CID }}.ipfs.dweb.link" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**DNSLink Status:** ${{ env.DNSLINK_UPDATED }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Deployment Details" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "> Note: It may take a few minutes for content to propagate across IPFS gateways." >> $GITHUB_STEP_SUMMARY
+          echo "### Verification" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Verify DNSLink record" >> $GITHUB_STEP_SUMMARY
+          echo "dig TXT _dnslink.deblog.filoz.org +short" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Note: It may take a few minutes for content to propagate across IPFS gateways and DNS." >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on commit (if applicable)
         if: github.event_name == 'push'
@@ -135,15 +182,22 @@ jobs:
         with:
           script: |
             const cid = process.env.CID;
+            const dnslinkUpdated = process.env.DNSLINK_UPDATED;
             const message = `🚀 **Blog deployed to Filecoin!**
 
             **CID:** \`${cid}\`
 
-            **Access your site:**
+            **DNSLink URLs:**
+            - https://dweb.link/ipns/deblog.filoz.org
+            - https://ipfs.io/ipns/deblog.filoz.org
+
+            **Direct CID URLs:**
             - https://ipfs.io/ipfs/${cid}
             - https://${cid}.ipfs.dweb.link
 
-            _Note: Allow a few minutes for IPFS gateway propagation._`;
+            **DNSLink Status:** ${dnslinkUpdated}
+
+            _Note: Allow a few minutes for IPFS gateway and DNS propagation._`;
 
             github.rest.repos.createCommitComment({
               owner: context.repo.owner,
