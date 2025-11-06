@@ -71,12 +71,12 @@ jobs:
       - name: Pin site to Filecoin
         env:
           PRIVATE_KEY: ${{ secrets.FILECOIN_PRIVATE_KEY }}
-          PROVIDER_ID: 9
+          PROVIDER_ID: 2
         run: |
-          echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 9)..."
+          echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 2)..."
           echo "PRIVATE_KEY is set: $([ -n "$PRIVATE_KEY" ] && echo "YES" || echo "NO")"
 
-          OUTPUT=$(filecoin-pin add ./public/ --provider-id 9 2>&1)
+          OUTPUT=$(filecoin-pin add ./public/ --provider-id 2 2>&1)
           EXIT_CODE=$?
 
           echo "=== Filecoin Pin Output ==="
