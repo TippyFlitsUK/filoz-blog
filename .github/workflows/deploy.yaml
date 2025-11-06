@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Filecoin Pin CLI
         run: |
-          npm install -g filecoin-pin
+          npm install -g filecoin-pin@latest
           filecoin-pin --version
 
       - name: Configure Filecoin Pin payments
