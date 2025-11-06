@@ -113,7 +113,7 @@ jobs:
             -d '[{
               "subname": "_dnslink",
               "type": "TXT",
-              "ttl": 300,
+              "ttl": 3600,
               "records": ["\"dnslink=/ipfs/'${CID}'\""]
             }]')
 

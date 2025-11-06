@@ -2,50 +2,21 @@
 
 ## What's Been Set Up
 
-Your Hugo blog with Filecoin PDP storage integration is ready! Here's what's configured:
+Your fully decentralized Hugo blog is ready! Here's what's configured:
 
-- ✅ Hugo v0.152.2 Extended installed
+- ✅ Hugo Extended v0.139.3+ installed
 - ✅ PaperMod theme installed as git submodule
-- ✅ Hugo configuration (hugo.yaml) with PaperMod settings
-- ✅ Sample welcome post created
-- ✅ Medium migration script (migrate-medium.sh)
-- ✅ Image optimization script (optimize-images.sh)
-- ✅ GitHub Actions workflow for Filecoin deployment
+- ✅ Custom FilOz branding and layouts
+- ✅ Hugo configuration (hugo.yaml) with all features enabled
+- ✅ GitHub Actions workflow for automated Filecoin deployment
+- ✅ DNSLink integration via deSEC (deblog.filoz.org)
 - ✅ Comprehensive README.md with full documentation
 
-## Next Steps
+**Live site**: https://deblog-filoz-org.ipns.dweb.link/
 
-### 1. Migrate Your Medium Posts
+## Quick Start
 
-```bash
-# Download your Medium export from: https://medium.com/me/settings/security
-# Extract medium-export.zip to this directory
-unzip medium-export.zip
-
-# Run migration script (installs medium-2-md if needed)
-npm install -g medium-2-md
-./migrate-medium.sh
-```
-
-This will:
-- Convert all Medium posts to Hugo markdown
-- Download ALL images locally to `static/images/`
-- Update markdown to reference local images
-- Add YAML frontmatter
-
-### 2. (Optional) Optimize Images
-
-```bash
-# Install ImageMagick if not already installed
-sudo apt-get install imagemagick
-
-# Run optimization
-./optimize-images.sh
-```
-
-This will resize, compress, and optionally convert images to WebP.
-
-### 3. Test Locally
+### 1. Test Locally
 
 ```bash
 # Start development server
@@ -54,7 +25,7 @@ hugo server -D
 # Open browser to http://localhost:1313
 ```
 
-### 4. Build Site
+### 2. Build Site
 
 ```bash
 # Production build
@@ -63,7 +34,7 @@ hugo --gc --minify
 # Output will be in ./public/
 ```
 
-### 5. Setup Filecoin Pin CLI
+### 3. Setup Filecoin Pin CLI
 
 ```bash
 # Install globally
@@ -84,7 +55,7 @@ filecoin-pin add ./public/
 # Note the CID returned
 ```
 
-### 6. GitHub Setup
+### 4. GitHub Setup
 
 ```bash
 # Create new GitHub repository
@@ -98,31 +69,38 @@ git add .
 git commit -m "Initial commit: Hugo blog with Filecoin PDP integration"
 
 # Push to GitHub
-git branch -M main
-git push -u origin main
+git branch -M master
+git push -u origin master
 ```
 
-### 7. Configure GitHub Secrets
+### 5. Configure GitHub Secrets
 
 1. Go to your GitHub repo
 2. Settings > Secrets and variables > Actions
-3. Click "New repository secret"
-4. Name: `FILECOIN_PRIVATE_KEY`
-5. Value: Your Ethereum private key (with test FIL and USDFC)
+3. Add these repository secrets:
+   - **FILECOIN_PRIVATE_KEY**: Your Ethereum private key (with test FIL and USDFC)
+   - **DESEC_TOKEN**: Your deSEC API token (for DNSLink updates)
 
-### 8. Automatic Deployment
+### 6. Automatic Deployment
 
-Every push to `main` branch will:
-1. Build Hugo site
-2. Pin to your Filecoin PDP node
-3. Generate new CID
-4. Comment on commit with IPFS URLs
+Every push to `master` branch automatically:
+1. Builds Hugo site with minification
+2. Pins to Filecoin PDP (provider ID 2)
+3. Generates new CID
+4. Updates DNSLink TXT record via deSEC
+5. Comments on commit with all access URLs
 
-Access your deployed site at:
+**Primary access** (automatically updated):
+- `https://deblog-filoz-org.ipns.dweb.link/` (recommended - has SSL)
+- `https://dweb.link/ipns/deblog.filoz.org`
+- `https://ipfs.io/ipns/deblog.filoz.org`
+
+**Direct CID access** (specific version):
 - `https://ipfs.io/ipfs/<CID>`
 - `https://dweb.link/ipfs/<CID>`
-- `https://cloudflare-ipfs.com/ipfs/<CID>`
 - `https://<CID>.ipfs.dweb.link`
+
+**Deployment time**: 3-5 minutes from push to live
 
 ## Workflow
 
@@ -153,13 +131,14 @@ git push
 
 ```
 filoz-blog/
-├── .github/workflows/deploy.yaml  # Auto-deployment workflow
+├── .github/workflows/deploy.yaml  # Auto-deployment with DNSLink
 ├── content/posts/                 # Your blog posts (markdown)
-├── static/images/                 # Images (will be on Filecoin)
+├── layouts/                       # Custom Hugo layouts
+├── assets/css/extended/           # Custom CSS overrides
+├── static/images/                 # Images (stored on Filecoin)
+├── static/hero*.json              # Lottie animations
 ├── themes/PaperMod/               # Theme (git submodule)
 ├── hugo.yaml                      # Site configuration
-├── migrate-medium.sh              # Medium migration script
-├── optimize-images.sh             # Image optimization script
 ├── README.md                      # Full documentation
 └── QUICKSTART.md                  # This file
 ```
@@ -167,14 +146,16 @@ filoz-blog/
 ## Key Files to Customize
 
 - **hugo.yaml** - Site title, description, social links, menu
-- **content/posts/** - Your blog posts
+- **content/posts/** - Your blog posts (markdown files)
 - **static/images/** - Your images
+- **layouts/** - Custom templates (optional)
+- **assets/css/extended/custom.css** - Custom styling (optional)
 
 ## Troubleshooting
 
 **Hugo version issues:**
 ```bash
-hugo version  # Should be v0.152.2 or higher
+hugo version  # Should be v0.139.3 or higher (Extended)
 ```
 
 **Theme not found:**
@@ -197,10 +178,11 @@ filecoin-pin payments setup --auto
 
 ## Important Notes
 
-- **Filecoin Pin CLI is ALPHA** (Calibration testnet only)
-- Each deployment creates a new CID (immutable content)
-- Images take 2-5 minutes to propagate across IPFS gateways
-- Update DNS/links to point to new CID after each deployment
+- **Filecoin Pin CLI is ALPHA** (Calibration testnet only as of November 2025)
+- Each deployment creates a new CID (immutable content addressing)
+- **DNSLink automatically updates** to point to latest CID
+- Content propagates to IPFS gateways in 2-5 minutes
+- Provider ID 2 has reliable IPNI advertisement success
 
 ## Support
 

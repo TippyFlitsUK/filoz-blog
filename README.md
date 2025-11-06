@@ -1,33 +1,46 @@
 # Filoz Blog
 
-A Hugo blog with PaperMod theme, fully deployed to Filecoin PDP (Proof of Data Possession) storage. All content, including images, is stored on decentralized Filecoin storage with cryptographic proof of persistence.
+A fully decentralized Hugo blog with PaperMod theme, deployed to Filecoin PDP (Proof of Data Possession) storage. All content is stored on Filecoin with cryptographic proof of persistence and accessible via DNSLink at **deblog.filoz.org**.
+
+## Quick Access
+
+- **Primary URL**: https://deblog-filoz-org.ipns.dweb.link/
+- **Alternative**: https://dweb.link/ipns/deblog.filoz.org
+- **Direct CID**: Check GitHub Actions summary after each deployment
 
 ## Features
 
-- **Hugo Static Site Generator** with PaperMod theme
-- **Filecoin PDP Storage** - All content pinned to personal storage provider node
+- **Hugo Static Site Generator** with PaperMod theme and custom FilOz branding
+- **Filecoin PDP Storage** - All content pinned with daily cryptographic proofs
+- **DNSLink** - Human-readable domain via deSEC DNS (deblog.filoz.org)
 - **IPFS Gateway Access** - Accessible via multiple IPFS gateways
-- **Automated Deployment** - GitHub Actions CI/CD pipeline
-- **Zero CDN Dependencies** - All content stored on decentralized Filecoin storage
+- **Automated Deployment** - Push to master triggers full CI/CD pipeline
+- **Zero CDN Dependencies** - Completely decentralized infrastructure
 
 ## Architecture
 
 ```
 Write Post (Markdown)
     ↓
-Git Push to GitHub
+Git Push to master branch
     ↓
 GitHub Actions Trigger
     ↓
 Hugo Build (--gc --minify)
     ↓
-Filecoin Pin CLI
+Filecoin Pin CLI (Provider ID 2)
     ↓
 Content Pinned to PDP Node
     ↓
 New CID Generated
     ↓
-Accessible via IPFS Gateways
+deSEC API Call
+    ↓
+DNSLink TXT Record Updated
+    ↓
+Site Accessible:
+  - deblog.filoz.org (DNSLink)
+  - Direct CID via IPFS gateways
 ```
 
 ## Prerequisites
@@ -152,46 +165,54 @@ https://ipfs.io/ipfs/<CID>
 
 ### GitHub Actions Deployment
 
-#### 1. Add GitHub Secret
+#### 1. Add GitHub Secrets
 
 1. Go to your GitHub repository
 2. Settings > Secrets and variables > Actions
-3. Click "New repository secret"
-4. Name: `FILECOIN_PRIVATE_KEY`
-5. Value: Your Ethereum private key (with test FIL and USDFC)
+3. Add these secrets:
+   - **FILECOIN_PRIVATE_KEY**: Your Ethereum private key (with test FIL and USDFC)
+   - **DESEC_TOKEN**: Your deSEC API token (for DNSLink updates)
 
 #### 2. Push to GitHub
 
 ```bash
 git add .
 git commit -m "Initial commit"
-git branch -M main
+git branch -M master
 git remote add origin https://github.com/yourusername/filoz-blog.git
-git push -u origin main
+git push -u origin master
 ```
 
 #### 3. Automatic Deployment
 
-Every push to `main` branch will:
-1. Build Hugo site
-2. Pin to Filecoin via your PDP node
-3. Generate new CID
-4. Create deployment artifact
-5. Comment on commit with IPFS URLs
+Every push to `master` branch automatically:
+1. Builds Hugo site with minification
+2. Pins to Filecoin PDP (provider ID 2)
+3. Generates new CID
+4. Updates DNSLink TXT record via deSEC
+5. Creates deployment artifacts
+6. Comments on commit with all access URLs
+
+**Deployment time**: 3-5 minutes from push to live
 
 ### Access Your Deployed Site
 
-After deployment, access your site via IPFS gateways:
+**Primary access via DNSLink** (automatically updated):
+- `https://deblog-filoz-org.ipns.dweb.link/` (recommended - has SSL)
+- `https://dweb.link/ipns/deblog.filoz.org`
+- `https://ipfs.io/ipns/deblog.filoz.org`
 
+**Direct CID access** (specific version):
 - `https://ipfs.io/ipfs/<CID>`
 - `https://dweb.link/ipfs/<CID>`
-- `https://cloudflare-ipfs.com/ipfs/<CID>`
 - `https://<CID>.ipfs.dweb.link`
 
-Find the CID in:
+Find the latest CID in:
 - GitHub Actions run summary
 - Commit comments
-- Downloaded artifacts (`cid.txt`)
+- Downloaded artifacts (`cid.txt` or `ipfs-uri.txt`)
+
+**Note**: DNSLink propagation takes 2-5 minutes after deployment
 
 ## Project Structure
 
@@ -269,20 +290,22 @@ PaperMod theme can be customized via `hugo.yaml` params. See [PaperMod Wiki](htt
 ### Filecoin Pin CLI Status
 
 - **Currently ALPHA software** on Calibration testnet
-- **NOT for production use** (as of October 2025)
+- **NOT for production use** (as of November 2025)
 - Register at [filecoin.cloud](https://filecoin.cloud) for mainnet availability
 
-### Content Addressing
+### DNSLink and Content Addressing
 
-- Each deployment creates a **new CID** (immutable)
-- Old CIDs remain accessible (if still pinned)
-- Update DNS/links to point to new CID after deployment
+- Each deployment creates a **new CID** (immutable content addressing)
+- **DNSLink automatically updates** to point to latest CID via deSEC API
+- Old CIDs remain accessible via IPFS if still pinned
+- DNSLink TXT record: `_dnslink.deblog.filoz.org` → `dnslink=/ipfs/<latest-CID>`
 
 ### IPFS Gateway Propagation
 
-- Content may take 2-5 minutes to appear on all gateways
+- Content may take 2-5 minutes to appear after DNSLink update
+- IPNI (InterPlanetary Network Indexer) advertisement ensures discoverability
+- Provider ID 2 has reliable IPNI advertisement success
 - Try different gateways if one is slow
-- Direct node access is fastest (if available)
 
 ## Troubleshooting
 
