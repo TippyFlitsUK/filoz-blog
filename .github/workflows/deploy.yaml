@@ -53,10 +53,10 @@ jobs:
       - name: Pin site to Filecoin
         env:
           PRIVATE_KEY: ${{ secrets.FILECOIN_PRIVATE_KEY }}
-          PROVIDER_ID: 3
+          PROVIDER_ID: 9
         run: |
-          echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 3)..."
-          OUTPUT=$(filecoin-pin add ./public/ --provider-id 3 2>&1)
+          echo "Pinning Hugo site to Filecoin PDP (Storage Provider ID: 9)..."
+          OUTPUT=$(filecoin-pin add ./public/ --provider-id 9 2>&1)
           echo "$OUTPUT"
 
           # Extract CID from output
