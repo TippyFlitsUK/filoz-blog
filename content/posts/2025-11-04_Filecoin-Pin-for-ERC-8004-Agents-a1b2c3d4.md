@@ -207,7 +207,7 @@ The tutorial includes:
 
 Everything you need is in the tutorial. It's designed to take you from zero to a registered agent in about 30–45 minutes. Having said that, if it's your first time working with Filecoin or Base Sepolia, you might want to give yourself a bit more time to get familiar with the faucets and tooling.
 
-<div style="position: relative; padding-bottom: 75%; height: 0;"><iframe src="https://www.loom.com/embed/d004f3d1b1c6419fbc8c73fbbe492c6b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+{{< youtube vU8Po444mp8 >}}
 
 ### What's Next?
 
