@@ -51,28 +51,6 @@ params:
     - name: slack
       url: "https://filecoinproject.slack.com/archives/CP50PPW2X"
 
-  # Disable PaperMod features we're replacing with custom layouts
-  defaultTheme: auto
-  ShowShareButtons: false
-  ShowReadingTime: true
-  displayFullLangName: true
-  ShowPostNavLinks: false
-  ShowBreadCrumbs: false
-  ShowCodeCopyButtons: true
-  ShowRssButtonInSectionTermList: false
-  ShowAllPagesInArchive: true
-  ShowPageNums: false
-  ShowToc: false
-
-  # Custom CSS
-  assets:
-    disableHLJS: false
-
-  # Disable home info since we're using custom layout
-  homeInfoParams:
-    Title: ""
-    Content: ""
-
 markup:
   goldmark:
     renderer:

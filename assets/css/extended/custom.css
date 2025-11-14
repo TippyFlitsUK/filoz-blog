@@ -644,17 +644,10 @@ body {
 }
 
 /* ===========================
-   OVERRIDE PAPERMOD DEFAULTS
+   MAIN CONTENT STYLING
    =========================== */
 .main {
   padding-top: 0; /* We handle padding in section_event */
   background-color: #f7f7f7;
   min-height: 100vh;
-}
-
-/* Hide PaperMod elements we're replacing */
-.top-link,
-.paginav,
-.share-buttons {
-  display: none !important;
 }
