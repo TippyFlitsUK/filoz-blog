@@ -1,6 +1,6 @@
 # Filoz Blog
 
-A fully decentralized Hugo blog with PaperMod theme, deployed to Filecoin PDP (Proof of Data Possession) storage. All content is stored on Filecoin with cryptographic proof of persistence and accessible via DNSLink at **deblog.filoz.org**.
+A fully decentralized Hugo blog with custom Webflow-based templates, deployed to Filecoin PDP (Proof of Data Possession) storage. All content is stored on Filecoin with cryptographic proof of persistence and accessible via DNSLink at **deblog.filoz.org**.
 
 ## Quick Access
 
@@ -10,7 +10,7 @@ A fully decentralized Hugo blog with PaperMod theme, deployed to Filecoin PDP (P
 
 ## Features
 
-- **Hugo Static Site Generator** with PaperMod theme and custom FilOz branding
+- **Hugo Static Site Generator** with custom Webflow-based templates and FilOz branding
 - **Filecoin PDP Storage** - All content pinned with daily cryptographic proofs
 - **DNSLink** - Human-readable domain via deSEC DNS (deblog.filoz.org)
 - **IPFS Gateway Access** - Accessible via multiple IPFS gateways
@@ -228,7 +228,6 @@ filoz-blog/
 ├── static/
 │   └── images/                  # Images (stored on Filecoin)
 ├── themes/
-│   └── PaperMod/                # Theme (git submodule)
 ├── hugo.yaml                    # Hugo configuration
 └── README.md
 ```
@@ -247,7 +246,6 @@ Edit `hugo.yaml` to customize:
 
 ### Theme Customization
 
-PaperMod theme can be customized via `hugo.yaml` params. See [PaperMod Wiki](https://github.com/adityatelange/hugo-PaperMod/wiki) for options.
 
 ## Workflow
 
@@ -350,7 +348,6 @@ filecoin-pin payments setup --auto
 ### Documentation
 
 - [Hugo Documentation](https://gohugo.io/documentation/)
-- [PaperMod Theme Wiki](https://github.com/adityatelange/hugo-PaperMod/wiki)
 - [Filecoin Docs](https://docs.filecoin.io/)
 - [Filecoin Pin CLI](https://github.com/filecoin-project/filecoin-pin)
 
@@ -367,7 +364,6 @@ MIT License - feel free to use this setup for your own blog.
 ## Credits
 
 - **Hugo** - Static site generator
-- **PaperMod** - Hugo theme by [@adityatelange](https://github.com/adityatelange)
 - **Filecoin** - Decentralized storage network
 - **IPFS** - InterPlanetary File System
 

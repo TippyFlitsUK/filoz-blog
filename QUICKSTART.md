@@ -5,7 +5,6 @@
 Your fully decentralized Hugo blog is ready! Here's what's configured:
 
 - ✅ Hugo Extended v0.139.3+ installed
-- ✅ PaperMod theme installed as git submodule
 - ✅ Custom FilOz branding and layouts
 - ✅ Hugo configuration (hugo.yaml) with all features enabled
 - ✅ GitHub Actions workflow for automated Filecoin deployment
@@ -137,7 +136,6 @@ filoz-blog/
 ├── assets/css/extended/           # Custom CSS overrides
 ├── static/images/                 # Images (stored on Filecoin)
 ├── static/hero*.json              # Lottie animations
-├── themes/PaperMod/               # Theme (git submodule)
 ├── hugo.yaml                      # Site configuration
 ├── README.md                      # Full documentation
 └── QUICKSTART.md                  # This file
@@ -187,7 +185,6 @@ filecoin-pin payments setup --auto
 ## Support
 
 - Hugo Docs: https://gohugo.io/documentation/
-- PaperMod Wiki: https://github.com/adityatelange/hugo-PaperMod/wiki
 - Filecoin Docs: https://docs.filecoin.io/
 - Issues: Check README.md Troubleshooting section
 
