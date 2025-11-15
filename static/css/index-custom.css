@@ -36,3 +36,10 @@
                     padding-top: 75px !important;
                     padding-bottom: 75px !important;
                 }
+
+                /* Increase vertical space between post icon and title on mobile */
+                @media screen and (max-width: 479px) {
+                    .event-image {
+                        margin-bottom: 1.5rem !important;  /* 24px spacing */
+                    }
+                }

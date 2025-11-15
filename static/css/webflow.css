@@ -4922,6 +4922,16 @@ figcaption {
   .grid-animation-wrapper {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
+  .lottie-left {
+    width: 200px;
+    height: 200px;
+    inset: 30% auto auto -10%;
+  }
+  .lottie-right {
+    width: 200px;
+    height: 200px;
+    inset: 30% -7% auto auto;
+  }
   .submenu-wrap {
     z-index: 10;
   }
