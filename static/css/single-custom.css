@@ -58,7 +58,7 @@
 
                 /* Prevent code blocks from expanding container */
                 .text-rich-text.w-richtext {
-                    overflow-x: auto;
+                    overflow-x: visible;
                 }
 
                 /* Blog post content styling - headings in black */
@@ -179,4 +179,90 @@
 
                 .text-rich-text.w-richtext em {
                     font-style: italic;
+                }
+
+                /* Ensure highlight wrapper allows code blocks to scroll */
+                .text-rich-text .highlight {
+                    overflow-x: auto;
+                    max-width: 100%;
+                }
+
+                /* Mobile-only adjustments for single post pages */
+                @media screen and (max-width: 479px) {
+                    /* Constrain the wide section */
+                    #events {
+                        max-width: 100vw !important;
+                        overflow-x: hidden !important;
+                    }
+
+                    /* Reduce global padding on mobile */
+                    .padding-global {
+                        padding-left: 1rem !important;
+                        padding-right: 1rem !important;
+                    }
+
+                    /* Reduce card padding on mobile to maximize content width */
+                    .event_featured-item.intern {
+                        padding: 20px !important;
+                        min-width: 0 !important;
+                        max-width: calc(100vw - 2rem) !important;
+                    }
+
+                    /* Reduce content padding on mobile */
+                    .event_featured-item-content.intern {
+                        padding: 15px !important;
+                        min-width: 0 !important;
+                        max-width: 100% !important;
+                    }
+
+                    /* Allow w-richtext to shrink below content width */
+                    .text-rich-text.w-richtext {
+                        min-width: 0 !important;
+                        max-width: 100% !important;
+                    }
+
+                    .highlight {
+                        max-width: 100% !important;
+                    }
+
+                    /* Ensure images don't exceed mobile screen width */
+                    .text-rich-text.w-richtext img {
+                        max-width: 100% !important;
+                        width: 100% !important;
+                    }
+
+                    /* Reduce heading font sizes for better mobile readability */
+                    .text-rich-text.w-richtext h1 {
+                        font-size: 1.75rem;
+                    }
+
+                    .text-rich-text.w-richtext h2 {
+                        font-size: 1.5rem;
+                    }
+
+                    .text-rich-text.w-richtext h3 {
+                        font-size: 1.25rem;
+                    }
+
+                    /* Override w-richtext overflow hidden on lists */
+                    .w-richtext ol,
+                    .w-richtext ul {
+                        overflow: visible !important;
+                    }
+
+                    /* Force code blocks to scroll */
+                    .highlight pre {
+                        overflow: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                        white-space: pre !important;
+                        margin: 0 !important;
+                    }
+
+                    .highlight pre code {
+                        white-space: pre !important;
+                        word-wrap: normal !important;
+                        word-break: normal !important;
+                        overflow-wrap: normal !important;
+                        display: block !important;
+                    }
                 }

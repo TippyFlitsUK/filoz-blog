@@ -87,8 +87,10 @@ hr {
   box-sizing: content-box;
   height: 0;
 }
-pre {
-  overflow: auto;
+@media screen and (min-width: 480px) {
+  pre {
+    overflow: auto;
+  }
 }
 code,
 kbd,
