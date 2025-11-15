@@ -3525,7 +3525,7 @@ figcaption {
 }
 .gallery_block.bg-image-1 {
   box-shadow: none;
-  background-image: url(https://cdn.prod.website-files.com/66a2ad2993901f5253eecd05/66eadec1693bf0b7c4cda0d6_YUNI5959_VSCO.webp);
+  background-image: url(/images/gallery/bg-1.webp);
   background-position: 50%;
   background-size: cover;
   background-attachment: scroll;
@@ -3533,7 +3533,7 @@ figcaption {
 }
 .gallery_block.bg-image-2 {
   box-shadow: none;
-  background-image: url(https://cdn.prod.website-files.com/66a2ad2993901f5253eecd05/66eadf3f98991e29fab35a1b_FILDEVSUMMIT_closing-03%201.webp);
+  background-image: url(/images/gallery/bg-2.webp);
   background-position: 60%;
   background-size: cover;
   background-attachment: scroll;
@@ -3541,7 +3541,7 @@ figcaption {
 }
 .gallery_block.bg-image-3 {
   box-shadow: none;
-  background-image: url(https://cdn.prod.website-files.com/66a2ad2993901f5253eecd05/66eadf5f442e84fd1e90baca_YUNI5969_VSCO.webp);
+  background-image: url(/images/gallery/bg-3.webp);
   background-position: 50%;
   background-size: cover;
   background-attachment: scroll;
